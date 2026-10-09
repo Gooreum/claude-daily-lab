@@ -1,13 +1,13 @@
 # feed-bookmark — 북마크 기반 증분 피드 리더
 
 ## 1. 무엇을 만들었나
-Atom/RSS 피드를 소스별 북마크로 증분 읽는 단일 파일 CLI(`feed_bookmark.py`, Python 표준 라이브러리만 사용)다. 소스마다 이미 본 entry id를 기억해 두고 새 항목만 Markdown 다이제스트로 내보내며, 읽기에 실패한 소스는 "조용함"이 아니라 "읽기 불가"로 따로 표시하고 종료 코드 2를 돌려준다. 기본 소스는 Claude Code·SDK 네 개의 GitHub 릴리스 피드이고, fixture 기반 단위 테스트(`test.sh`)와 실제 피드 e2e(`e2e.sh`)가 들어 있다.
+Atom/RSS 피드를 소스별 북마크로 증분 읽는 단일 파일 CLI(`feed_bookmark.py`, Python 표준 라이브러리만 사용)다. 소스마다 이미 본 entry id를 기억해 두고 새 항목만 Markdown 다이제스트로 내보내며, 읽기에 실패한 소스는 "조용함"이 아니라 "읽기 불가"로 따로 표시하고 종료 코드 2를 돌려준다. 기본 소스는 Claude Code·SDK 릴리스, Cookbook·Skills·Quickstarts 커밋, Simon Willison의 Claude 태그까지 아홉 개의 Atom 피드이고, fixture 기반 단위 테스트(`test.sh`)와 실제 피드 e2e(`e2e.sh`)가 들어 있다.
 
 ## 2. 왜 만들었나
 2026-10-08 Claude 블로그 글 [Building effective agent automations](https://claude.dev/blog/building-effective-agent-automations/)은 매일 돌아가는 요약 에이전트의 참조 구현을 설명하면서 세 가지를 권한다. 소스별 북마크로 증분 읽기, 읽기 실패를 "조용한 하루"가 아니라 "확인 못 함"으로 보고하기, 읽기 전용 권한. 이 저장소의 매일 06:45 수집 단계(RULES.md 1절)가 정확히 그 모양이라, 조언을 그대로 코드로 옮겨 수집 단계에 끼울 수 있는 도구를 만들기로 했다. 같은 날의 앞선 두 결과물(훅, 모드)과 종류도 겹치지 않는다.
 
 ## 3. 어떻게 만들었나
-1. **소스 고르기**: Anthropic 뉴스 페이지에는 공식 피드가 없어서, 어떤 저장소든 제공되는 GitHub 릴리스 Atom(`/releases.atom`)을 기본 소스로 삼았다. claude-code, anthropic-sdk-python, anthropic-sdk-typescript, claude-agent-sdk-python 네 개가 모두 200으로 응답하는 것을 먼저 확인했다.
+1. **소스 고르기**: Anthropic 뉴스 페이지에는 공식 피드가 없어서, 어떤 저장소든 제공되는 GitHub 릴리스 Atom(`/releases.atom`)을 기본 소스로 삼았다. claude-code, anthropic-sdk-python, anthropic-sdk-typescript, claude-agent-sdk-python 네 개가 모두 200으로 응답하는 것을 먼저 확인했다. 같은 날 저녁 RULES.md 우선 출처를 늘리면서 TypeScript Agent SDK 릴리스, Cookbook·Skills·Quickstarts 커밋 피드(`/commits/main.atom`), Simon Willison의 Claude 태그 피드를 더해 아홉 개가 됐다.
 2. **북마크 설계**: 소스당 `{"seen_ids": [...], "last_ok": ISO8601, "last_new_count": N}`. 시각 비교 대신 id 집합을 쓴 이유는 GitHub 피드가 `<updated>`를 릴리스 편집 시마다 바꿔서 시각 기준으로는 같은 항목이 다시 떠오르기 때문이다. id는 Atom `<id>` → RSS `<guid>` → `<link>` → 제목+날짜 해시 순으로 고른다.
 3. **첫 실행 처리**: 북마크가 없는 첫 실행은 피드의 과거 항목이 전부 "새 항목"으로 쏟아진다. `--max-age-hours`(기본 48) 안의 항목만 보고하고 나머지는 북마크에만 흡수하게 했다. 북마크가 생긴 뒤에는 나이와 무관하게 "못 본 것"은 전부 보고한다. 북마크가 기준이지 시계가 기준이 아니다.
 4. **실패 분류**: fetch 실패(`FetchError`)와 파싱 실패(`ParseError`)를 잡아 그 소스만 `unavailable`로 표시하고 북마크를 건드리지 않는다. 다른 소스는 정상 전진한다. 종료 코드 2로 cron이 실패를 알아채게 했다.
@@ -80,6 +80,6 @@ echo "exit=$?"                                # 0 = 모든 소스 읽음, 2 = �
 
 ## 7. 출처
 - Building effective agent automations (2026-10-08): https://claude.dev/blog/building-effective-agent-automations/
-- GitHub 릴리스 Atom 피드: https://github.com/anthropics/claude-code/releases.atom 외 sources.json의 네 개
+- GitHub Atom 피드: https://github.com/anthropics/claude-code/releases.atom 외 sources.json의 아홉 개 (릴리스는 `/releases.atom`, 커밋은 `/commits/main.atom`)
 - Python `urllib.request`(file:// 지원), `xml.etree.ElementTree`, `email.utils.parsedate_to_datetime` 표준 문서
 - 오늘 수집한 소식: ../../news/2026-10-10.md
