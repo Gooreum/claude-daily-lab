@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <id>tag:example.org,2026:empty</id>
+  <title>Nothing here</title>
+  <updated>2026-10-10T00:00:00Z</updated>
+</feed>

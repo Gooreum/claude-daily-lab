@@ -1,0 +1,8 @@
+{
+  "sources": [
+    { "name": "claude-code",              "url": "https://github.com/anthropics/claude-code/releases.atom" },
+    { "name": "anthropic-sdk-python",     "url": "https://github.com/anthropics/anthropic-sdk-python/releases.atom" },
+    { "name": "anthropic-sdk-typescript", "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases.atom" },
+    { "name": "claude-agent-sdk-python",  "url": "https://github.com/anthropics/claude-agent-sdk-python/releases.atom" }
+  ]
+}
