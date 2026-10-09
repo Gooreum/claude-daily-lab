@@ -1,7 +1,7 @@
 # feed-bookmark — 북마크 기반 증분 피드 리더
 
 ## 1. 무엇을 만들었나
-Atom/RSS 피드를 소스별 북마크로 증분 읽는 단일 파일 CLI(`feed_bookmark.py`, Python 표준 라이브러리만 사용)다. 소스마다 이미 본 entry id를 기억해 두고 새 항목만 Markdown 다이제스트로 내보내며, 읽기에 실패한 소스는 "조용함"이 아니라 "읽기 불가"로 따로 표시하고 종료 코드 2를 돌려준다. 기본 소스는 Claude Code·SDK 릴리스, Cookbook·Skills·Quickstarts 커밋, Simon Willison의 Claude 태그까지 아홉 개의 Atom 피드이고, fixture 기반 단위 테스트(`test.sh`)와 실제 피드 e2e(`e2e.sh`)가 들어 있다.
+Atom/RSS 피드를 소스별 북마크로 증분 읽는 단일 파일 CLI(`feed_bookmark.py`, Python 표준 라이브러리만 사용)다. 소스마다 이미 본 entry id를 기억해 두고 새 항목만 Markdown 다이제스트로 내보내며, 읽기에 실패한 소스는 "조용함"이 아니라 "읽기 불가"로 따로 표시하고 종료 코드 2를 돌려준다. 기본 소스는 Claude Code·SDK 릴리스, Cookbook·Skills·Quickstarts·공식 플러그인 커밋, Simon Willison, dev.to, GeekNews, Product Hunt, Latent Space까지 열네 개의 Atom/RSS 피드이고, fixture 기반 단위 테스트(`test.sh`)와 실제 피드 e2e(`e2e.sh`)가 들어 있다.
 
 ## 2. 왜 만들었나
 2026-10-08 Claude 블로그 글 [Building effective agent automations](https://claude.dev/blog/building-effective-agent-automations/)은 매일 돌아가는 요약 에이전트의 참조 구현을 설명하면서 세 가지를 권한다. 소스별 북마크로 증분 읽기, 읽기 실패를 "조용한 하루"가 아니라 "확인 못 함"으로 보고하기, 읽기 전용 권한. 이 저장소의 매일 06:45 수집 단계(RULES.md 1절)가 정확히 그 모양이라, 조언을 그대로 코드로 옮겨 수집 단계에 끼울 수 있는 도구를 만들기로 했다. 같은 날의 앞선 두 결과물(훅, 모드)과 종류도 겹치지 않는다.
@@ -26,9 +26,12 @@ python3 feed_bookmark.py --json               # JSON 출력
 python3 feed_bookmark.py --sources my.json --state ~/.cache/feed-state.json --max-age-hours 24
 echo "exit=$?"                                # 0 = 모든 소스 읽음, 2 = 읽기 불가 소스 있음, 1 = 설정/상태 파일 오류
 ```
-`sources.json` 형식:
+`sources.json` 형식. 범용 피드는 `match`(제목 정규식, 대소문자 무시)로 관련 항목만 남긴다:
 ```json
-{ "sources": [ { "name": "claude-code", "url": "https://github.com/anthropics/claude-code/releases.atom" } ] }
+{ "sources": [
+  { "name": "claude-code", "url": "https://github.com/anthropics/claude-code/releases.atom" },
+  { "name": "geeknews",    "url": "https://news.hada.io/rss/news", "match": "claude|anthropic|클로드" }
+] }
 ```
 매일 수집 루틴에 끼우려면 `python3 feed_bookmark.py >> news/$(date +%F).md` 처럼 출력을 그날 소식 파일에 붙이고, 종료 코드 2를 "확인 못 한 소스 있음"으로 처리하면 된다.
 
@@ -80,6 +83,6 @@ echo "exit=$?"                                # 0 = 모든 소스 읽음, 2 = �
 
 ## 7. 출처
 - Building effective agent automations (2026-10-08): https://claude.dev/blog/building-effective-agent-automations/
-- GitHub Atom 피드: https://github.com/anthropics/claude-code/releases.atom 외 sources.json의 아홉 개 (릴리스는 `/releases.atom`, 커밋은 `/commits/main.atom`)
+- GitHub Atom 피드: https://github.com/anthropics/claude-code/releases.atom 외 sources.json의 열네 개 (릴리스는 `/releases.atom`, 커밋은 `/commits/main.atom`; dev.to·GeekNews·Product Hunt·Latent Space는 RSS)
 - Python `urllib.request`(file:// 지원), `xml.etree.ElementTree`, `email.utils.parsedate_to_datetime` 표준 문서
 - 오늘 수집한 소식: ../../news/2026-10-10.md

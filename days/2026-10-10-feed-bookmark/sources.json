@@ -1,13 +1,62 @@
 {
   "sources": [
-    { "name": "claude-code",                 "url": "https://github.com/anthropics/claude-code/releases.atom" },
-    { "name": "anthropic-sdk-python",        "url": "https://github.com/anthropics/anthropic-sdk-python/releases.atom" },
-    { "name": "anthropic-sdk-typescript",    "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases.atom" },
-    { "name": "claude-agent-sdk-python",     "url": "https://github.com/anthropics/claude-agent-sdk-python/releases.atom" },
-    { "name": "claude-agent-sdk-typescript", "url": "https://github.com/anthropics/claude-agent-sdk-typescript/releases.atom" },
-    { "name": "claude-cookbooks-commits",    "url": "https://github.com/anthropics/claude-cookbooks/commits/main.atom" },
-    { "name": "anthropic-skills-commits",    "url": "https://github.com/anthropics/skills/commits/main.atom" },
-    { "name": "anthropic-quickstarts-commits", "url": "https://github.com/anthropics/anthropic-quickstarts/commits/main.atom" },
-    { "name": "simonwillison-claude",        "url": "https://simonwillison.net/tags/claude.atom" }
+    {
+      "name": "claude-code",
+      "url": "https://github.com/anthropics/claude-code/releases.atom"
+    },
+    {
+      "name": "anthropic-sdk-python",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/releases.atom"
+    },
+    {
+      "name": "anthropic-sdk-typescript",
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/releases.atom"
+    },
+    {
+      "name": "claude-agent-sdk-python",
+      "url": "https://github.com/anthropics/claude-agent-sdk-python/releases.atom"
+    },
+    {
+      "name": "claude-agent-sdk-typescript",
+      "url": "https://github.com/anthropics/claude-agent-sdk-typescript/releases.atom"
+    },
+    {
+      "name": "claude-cookbooks-commits",
+      "url": "https://github.com/anthropics/claude-cookbooks/commits/main.atom"
+    },
+    {
+      "name": "anthropic-skills-commits",
+      "url": "https://github.com/anthropics/skills/commits/main.atom"
+    },
+    {
+      "name": "anthropic-quickstarts-commits",
+      "url": "https://github.com/anthropics/anthropic-quickstarts/commits/main.atom"
+    },
+    {
+      "name": "simonwillison-claude",
+      "url": "https://simonwillison.net/tags/claude.atom"
+    },
+    {
+      "name": "claude-plugins-official-commits",
+      "url": "https://github.com/anthropics/claude-plugins-official/commits/main.atom"
+    },
+    {
+      "name": "devto-claudecode",
+      "url": "https://dev.to/feed/tag/claudecode"
+    },
+    {
+      "name": "geeknews",
+      "url": "https://news.hada.io/rss/news",
+      "match": "claude|anthropic|클로드"
+    },
+    {
+      "name": "producthunt",
+      "url": "https://www.producthunt.com/feed",
+      "match": "claude|anthropic"
+    },
+    {
+      "name": "latent-space",
+      "url": "https://www.latent.space/feed"
+    }
   ]
 }

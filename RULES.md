@@ -21,6 +21,15 @@
   - GitHub 피드 (Atom, 증분 읽기 가능): `anthropics/anthropic-sdk-python`·`anthropic-sdk-typescript`·`claude-agent-sdk-python`·`claude-agent-sdk-typescript` 릴리스, `anthropics/claude-cookbooks` 커밋(https://github.com/anthropics/claude-cookbooks/commits/main.atom)
   - 신뢰할 만한 개발자 블로그: Simon Willison의 Claude 태그(https://simonwillison.net/tags/claude.atom) 등
   - anthropic.com·claude.com에는 RSS가 없다. Reddit·HN 같은 커뮤니티 피드는 봇 차단이 잦아 우선 출처로 쓰지 않는다.
+- 서비스·사례 출처 (기술 변경보다 "누가 무엇을 만들었나"를 보는 곳. 매일 한 번 훑고 눈에 띄는 것만 항목으로 올린다):
+  - https://claude.com/customers — 고객 사례. 카드에 날짜가 없으니 전날 제목과 비교해 새 것만 본다
+  - https://claude.com/marketplace — 커넥터·플러그인·파트너 제품. "Trending now"(이번 주 급상승) 목록을 본다
+  - https://github.com/anthropics/claude-plugins-official/commits/main.atom — 공식 플러그인 갱신. 어떤 회사가 Claude용 제품을 내는지 보인다
+  - https://dev.to/feed/tag/claudecode — 개발자들의 실사용 글
+  - https://news.hada.io/rss/news — GeekNews(한국어). 제목에 Claude·Anthropic이 있는 것만
+  - https://www.producthunt.com/feed — 제품 런칭. 제목에 Claude가 있는 것만
+  - https://www.latent.space/feed — AINews 요약·팟캐스트
+  - Medium 태그 피드는 잡글이 많아 쓰지 않는다. X·Bluesky·Threads는 로그인 없이 읽히지 않는다.
 - 결과를 `news/YYYY-MM-DD.md`에 항목별로 기록한다. 항목마다 **제목, 날짜, 출처 URL, 2~3문장 요약**을 쓴다.
 - 항목마다 **현실 적용 아이디어를 5가지 이상** 적는다. 소식을 스크랩만 하고 끝내지 않고, "이걸 어디에 써먹을 수 있나"까지 쓴다.
   - 한 줄에 하나씩, `어디에(팀·제품·워크플로) → 무엇을 → 왜 이득` 순서로 쓴다.

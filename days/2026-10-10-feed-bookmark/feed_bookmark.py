@@ -14,6 +14,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import sys
 import tempfile
 import urllib.error
@@ -222,6 +223,9 @@ def run(
         except (FetchError, ParseError) as e:
             results.append(SourceResult(name, url, "unavailable", reason=str(e)))
             continue  # 북마크는 그대로 둔다
+        if src.get("match"):  # 범용 피드(GeekNews, Product Hunt)는 제목이 정규식에 맞는 항목만 본다
+            pat = re.compile(src["match"], re.IGNORECASE)
+            entries = [e for e in entries if pat.search(e.title or "")]
         new, nxt = diff_source(entries, bookmarks.get(name), now, max_age_hours)
         bookmarks[name] = nxt
         results.append(SourceResult(name, url, "new" if new else "quiet", new))
@@ -239,7 +243,14 @@ def load_sources(path: Path) -> list[dict]:
     for i, it in enumerate(items):
         if not isinstance(it, dict) or not it.get("name") or not it.get("url"):
             raise ValueError(f"{path}: sources[{i}]에 name/url이 필요합니다")
-        out.append({"name": str(it["name"]), "url": str(it["url"])})
+        src = {"name": str(it["name"]), "url": str(it["url"])}
+        if it.get("match"):
+            try:
+                re.compile(str(it["match"]))
+            except re.error as e:
+                raise ValueError(f"{path}: sources[{i}].match 정규식 오류: {e}") from e
+            src["match"] = str(it["match"])
+        out.append(src)
     return out
 
 

@@ -120,6 +120,22 @@ class RunTests(unittest.TestCase):
         self.assertNotIn("bad", new_state["bookmarks"])
         self.assertEqual(len(new_state["bookmarks"]["ok"]["seen_ids"]), 3)
 
+    def test_match_filters_titles_case_insensitively(self):
+        sources = [{"name": "f", "url": uri("atom_v1.xml"), "match": r"v1\.[12]\.0"}]
+        results, state = fb.run(sources, {"bookmarks": {}}, now=NOW)
+        self.assertEqual([e.title for e in results[0].entries], ["v1.2.0", "v1.1.0"])
+        self.assertEqual(len(state["bookmarks"]["f"]["seen_ids"]), 2)  # 걸러진 항목은 북마크에도 안 들어간다
+        sources = [{"name": "f", "url": uri("atom_v1.xml"), "match": "V1\\.0"}]
+        results, _ = fb.run(sources, {"bookmarks": {}}, now=NOW)
+        self.assertEqual(results[0].status, "quiet")  # 100시간 전 항목뿐이라 첫 실행 창 밖
+
+    def test_bad_match_regex_is_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "s.json"
+            p.write_text(json.dumps({"sources": [{"name": "x", "url": "file:///x", "match": "("}]}))
+            with self.assertRaises(ValueError):
+                fb.load_sources(p)
+
     def test_render_markdown_marks_unavailable(self):
         results = [
             fb.SourceResult("a", "u", "new", [fb.Entry("1", "T", "https://x", NOW)]),
