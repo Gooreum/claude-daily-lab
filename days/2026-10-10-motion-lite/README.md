@@ -3,7 +3,11 @@
 ## 1. 무엇을 만들었나
 Python CLI `motion_lite.py` 하나와 그것이 뱉는 단일 HTML. 컨셉 한 줄을 주면 Claude Haiku 5.5가 `claude -p --json-schema`로 스토리보드 JSON(장면·자막·도형·등장 애니메이션)을 쓰고, 스크립트가 그 JSON을 박은 HTML을 만든다. 브라우저에서 열면 canvas가 16:9로 재생하고(장면 크로스페이드, 자막 띠, 재생/탐색, 장면 목록), "WebM 저장" 버튼이 `canvas.captureStream` + `MediaRecorder`로 처음부터 끝까지 녹화해 내려준다. `--dry-run`은 내장 스토리보드("Claude Code 모드란?")로 모델 없이 렌더한다.
 
-![재생 화면](screenshot.jpg)
+![내장 스토리보드 'Claude Code 모드란?' 재생 GIF](demo.gif)
+
+위 GIF는 `--dry-run` 결과물(`out/claude-code-모드란.html`)을 Chrome에서 0.1초 간격으로 그려 181프레임을 받아 Pillow로 합친 것이다(640×360, 18초, 0.85MB). 실제 Haiku 생성물의 스크린샷은 아래.
+
+![Haiku가 만든 '마피아 게임 규칙' 재생 화면](screenshot.jpg)
 
 ## 2. 왜 만들었나
 2026-10-08 [Claude Dashboards와 Claude Motion 베타](https://claude.com/resources/articles/dashboards-and-motion). Motion은 프롬프트로 짧은 애니메이션 설명 영상을 만들어 MP4로 주는데 Team/Enterprise 전용이다. "모델이 영상을 그리는 게 아니라 **구조화된 스토리보드를 쓰고**, 렌더는 코드가 한다"는 구조라면 브라우저 하나로 흉내 낼 수 있겠다 싶었다. 구조화 출력(JSON 스키마)이 어디까지 "디자인"을 받아낼 수 있는지 보는 실험이기도 하다.
