@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test-changed-days:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 변경된 days/ 폴더의 test.sh 실행
+        shell: bash
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          HEAD_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+
+          # 비교 기준 커밋 결정
+          if [ -z "$BASE_SHA" ] || [ "$BASE_SHA" = "0000000000000000000000000000000000000000" ] \
+             || ! git cat-file -e "$BASE_SHA^{commit}" 2>/dev/null; then
+            # 새 브랜치 등으로 before가 없으면 부모 커밋과 비교, 부모도 없으면(첫 커밋) 건너뜀
+            if git rev-parse --verify -q "$HEAD_SHA^" >/dev/null; then
+              BASE_SHA="$HEAD_SHA^"
+            else
+              echo "비교 대상 커밋이 없습니다 (첫 커밋). 건너뜁니다."
+              exit 0
+            fi
+          fi
+
+          echo "비교: $BASE_SHA..$HEAD_SHA"
+
+          # 변경 파일 → days/<폴더> 목록 (중복 제거, NUL 구분으로 공백 경로 안전)
+          changed_dirs=()
+          while IFS= read -r -d '' dir; do
+            changed_dirs+=("$dir")
+          done < <(
+            git diff --name-only -z "$BASE_SHA" "$HEAD_SHA" -- 'days/' \
+              | tr '\0' '\n' \
+              | awk -F/ '$1=="days" && NF>=3 {print $1"/"$2}' \
+              | sort -u \
+              | tr '\n' '\0'
+          )
+
+          if [ "${#changed_dirs[@]}" -eq 0 ]; then
+            echo "변경된 프로젝트 폴더가 없습니다. 성공으로 종료합니다."
+            exit 0
+          fi
+
+          failed=0
+          for dir in "${changed_dirs[@]}"; do
+            if [ ! -d "$dir" ]; then
+              echo "[$dir] 폴더가 삭제됨. 건너뜁니다."
+              continue
+            fi
+            if [ ! -f "$dir/test.sh" ]; then
+              echo "[$dir] test.sh 없음. 건너뜁니다."
+              continue
+            fi
+            echo "::group::[$dir] bash test.sh"
+            if (cd "$dir" && bash test.sh); then
+              echo "[$dir] 통과"
+            else
+              echo "::error::[$dir] test.sh 실패"
+              failed=1
+            fi
+            echo "::endgroup::"
+          done
+
+          exit "$failed"

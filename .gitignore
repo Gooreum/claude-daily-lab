@@ -1,0 +1,14 @@
+node_modules/
+.env
+.env.*
+__pycache__/
+*.pyc
+.venv/
+venv/
+dist/
+build/
+.DS_Store
+*.log
+.idea/
+.vscode/
+.ai-bouncer-tasks/
