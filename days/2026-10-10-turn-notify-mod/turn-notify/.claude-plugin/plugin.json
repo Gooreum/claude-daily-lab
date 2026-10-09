@@ -1,0 +1,6 @@
+{
+  "name": "turn-notify",
+  "version": "0.1.0",
+  "description": "Shows each turn's duration and token usage under the answer, sends a native notification when a turn ran long, and adds /turnstats",
+  "author": { "name": "claude-daily-lab" }
+}

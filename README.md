@@ -41,4 +41,5 @@ claude-daily-lab/
 <!-- 최신 항목이 위로 오도록 이 줄 아래에 행을 추가 -->
 | 날짜 | 이름 | 종류 | 계기가 된 소식 | 한 줄 설명 |
 |------|------|------|----------------|------------|
+| 2026-10-10 | [turn-notify-mod](days/2026-10-10-turn-notify-mod/) | Claude Code 모드 | [Claude Code 2.1.295: 모드용 `$.ui.notify`](https://code.claude.com/docs/en/changelog) | 턴마다 소요 시간·토큰을 답변 아래 표시하고 30초 넘는 턴은 네이티브 알림. `/turnstats` 누계, plugin test·실제 세션 e2e 포함 |
 | 2026-10-10 | [onfailure-secret-guard](days/2026-10-10-onfailure-secret-guard/) | Claude Code 훅 | [Claude Code 2.1.295: 훅 `onFailure: "block"`](https://code.claude.com/docs/en/changelog) | 비밀값 패턴을 막는 PreToolUse 훅. 훅이 죽어도 통과시키지 않는 fail-closed 설정과 실제 세션 e2e 포함 |
