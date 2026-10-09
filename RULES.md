@@ -16,7 +16,7 @@
   - https://claude.com/blog
   - https://claude.dev/blog — 자동화·에이전트 참조 구현 글
   - Claude Code 문서와 GitHub `anthropics/claude-code` 릴리스 (https://code.claude.com/docs/en/changelog)
-  - docs.claude.com 릴리스 노트 모음: https://docs.claude.com/en/release-notes/overview (API, Claude 앱, Claude Code)
+  - platform.claude.com 릴리스 노트 모음: https://platform.claude.com/docs/en/release-notes/overview (API 릴리스 노트는 https://platform.claude.com/docs/en/release-notes/api. docs.claude.com 주소는 여기로 301 리다이렉트된다)
   - support.claude.com 릴리스 노트
   - GitHub 피드 (Atom, 증분 읽기 가능): `anthropics/anthropic-sdk-python`·`anthropic-sdk-typescript`·`claude-agent-sdk-python`·`claude-agent-sdk-typescript` 릴리스, `anthropics/claude-cookbooks` 커밋(https://github.com/anthropics/claude-cookbooks/commits/main.atom)
   - 신뢰할 만한 개발자 블로그: Simon Willison의 Claude 태그(https://simonwillison.net/tags/claude.atom) 등
