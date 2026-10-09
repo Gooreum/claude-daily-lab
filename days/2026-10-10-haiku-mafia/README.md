@@ -7,7 +7,7 @@ Python CLI `mafia.py`. Claude Haiku 5.5 다섯 명(아라·보검·찬우·다�
 2026-10-07 [Claude Haiku 5.5](https://www.anthropic.com/claude-haiku-5-5) 출시(입력 $0.10/출력 $0.50 per MTok, Claude Code 2.1.293에서 기본 Haiku)와 Claude Code `-p`의 `--json-schema` 구조화 출력을 같이 써 보고 싶었다. "싸고 빠른 모델 다섯이 서로 거짓말하면 얼마나 재미있나"가 질문이었고, 한 판에 수십 번의 호출이 들어가도 몇 센트면 되는지 확인하는 것도 목적이었다. 앞선 결과물들이 "유용하지만 노잼"이라는 평을 들은 날의 반성문이기도 하다.
 
 ## 3. 어떻게 만들었나
-1. **플레이어 = CLI 호출**: API 키 없이 Claude Code의 로그인 그대로 `claude -p`를 쓴다. `--system-prompt`에 이름·역할·역할별 조언, 프롬프트에 공개 로그와 본인만 아는 메모(탐정 조사 결과), `--json-schema`로 `{say, target}`을 강제하되 `target`은 그 시점 생존자 이름의 `enum`. `--tools ""`, `--max-turns 1`, `--effort low`, `--no-session-persistence`로 가볍게.
+1. **플레이어 = CLI 호출**: API 키 없이 Claude Code의 로그인 그대로 `claude -p`를 쓴다. `--system-prompt`에 이름·역할·역할별 조언, 프롬프트에 공개 로그와 본인만 아는 메모(탐정 조사 결과), `--json-schema`로 `{say, target}`을 강제하되 `target`은 그 시점 생존자 이름의 `enum`. `--tools ""`, `--max-turns 3`(구조화 출력이 턴을 하나 더 쓴다), `--effort low`, `--no-session-persistence`로 가볍게.
 2. **엔진**: `Game`이 밤(마피아 지목·탐정 조사는 병렬 호출) → 낮(발언은 순서대로, 서로의 말을 보며) → 투표(병렬) → 과반 처형을 돌린다. 첫 발언자는 매일 바뀐다. `winner()`가 승패를 판정한다.
 3. **대본 봇** (`ScriptedBackend`): 시드 고정 난수. 탐정은 조사로 찾은 마피아에게 표를 모은다. 테스트와 `--dry-run`, 그리고 모델 응답이 깨졌을 때의 대체 선수로 쓴다.
 4. **막힌 지점 — `--bare`**: 처음엔 훅을 건너뛰려 `--bare`를 붙였더니 18번 모두 "Not logged in"이 났다. `--bare`가 저장된 로그인 정보까지 건너뛴다. 플래그를 빼고, `is_error` 응답을 명시적으로 실패로 처리해 대본 봇이 대신 답하되 stderr에 이유를 남기게 했다. 테스트로 고정했다.

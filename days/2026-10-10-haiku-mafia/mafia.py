@@ -113,7 +113,7 @@ class ClaudeBackend:
         }
         cmd = [
             "claude", "-p", prompt, "--model", self.model, "--effort", "low", "--no-session-persistence",
-            "--tools", "", "--max-turns", "1", "--output-format", "json", "--system-prompt", system,
+            "--tools", "", "--max-turns", "3", "--output-format", "json", "--system-prompt", system,
             "--json-schema", json.dumps(schema, ensure_ascii=False),
         ]
         t0 = time.time()
@@ -121,7 +121,7 @@ class ClaudeBackend:
             run = subprocess.run(cmd, capture_output=True, text=True, timeout=self.timeout, stdin=subprocess.DEVNULL)
             data = json.loads(run.stdout)
             if data.get("is_error"):
-                raise ValueError(str(data.get("result"))[:120])
+                raise ValueError(str(data.get("result") or data.get("subtype"))[:120])
             out = data.get("structured_output") or {}
             target, say = out.get("target"), str(out.get("say", "")).strip()
             if target not in ask.choices or not say:

@@ -149,12 +149,12 @@ def storyboard_from_model(concept: str, model: str = DEFAULT_MODEL, timeout: flo
     )
     prompt = f"컨셉: {concept}\n스토리보드 JSON을 써라."
     cmd = ["claude", "-p", prompt, "--model", model, "--effort", "low", "--no-session-persistence", "--tools", "",
-           "--max-turns", "1", "--output-format", "json", "--system-prompt", system,
+           "--max-turns", "3", "--output-format", "json", "--system-prompt", system,
            "--json-schema", json.dumps(SCHEMA, ensure_ascii=False)]
     run = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, stdin=subprocess.DEVNULL)
     data = json.loads(run.stdout)
     if data.get("is_error"):
-        raise StoryboardError(f"모델 호출 실패: {str(data.get('result'))[:200]}")
+        raise StoryboardError(f"모델 호출 실패: {str(data.get('result') or data.get('subtype'))[:200]}")
     sb = validate_storyboard(data.get("structured_output"))
     sb["_meta"] = {"model": model, "cost_usd": data.get("total_cost_usd"), "duration_ms": data.get("duration_ms")}
     return sb
