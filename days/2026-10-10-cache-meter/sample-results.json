@@ -1,0 +1,137 @@
+{
+ "model": "claude-haiku-5-5",
+ "calls": [
+  {
+   "scenario": "stable",
+   "index": 0,
+   "cache_write": 0,
+   "cache_read": 20910,
+   "uncached_input": 2,
+   "output_tokens": 86,
+   "cost_usd": 0.0002523,
+   "duration_ms": 1215,
+   "error": ""
+  },
+  {
+   "scenario": "stable",
+   "index": 1,
+   "cache_write": 0,
+   "cache_read": 20910,
+   "uncached_input": 2,
+   "output_tokens": 87,
+   "cost_usd": 0.0002528,
+   "duration_ms": 1044,
+   "error": ""
+  },
+  {
+   "scenario": "stable",
+   "index": 2,
+   "cache_write": 0,
+   "cache_read": 20910,
+   "uncached_input": 2,
+   "output_tokens": 114,
+   "cost_usd": 0.0002663,
+   "duration_ms": 2297,
+   "error": ""
+  },
+  {
+   "scenario": "stable",
+   "index": 3,
+   "cache_write": 0,
+   "cache_read": 20910,
+   "uncached_input": 2,
+   "output_tokens": 107,
+   "cost_usd": 0.0002628,
+   "duration_ms": 1489,
+   "error": ""
+  },
+  {
+   "scenario": "volatile-head",
+   "index": 0,
+   "cache_write": 11776,
+   "cache_read": 9173,
+   "uncached_input": 2,
+   "output_tokens": 115,
+   "cost_usd": 0.00250463,
+   "duration_ms": 1312,
+   "error": ""
+  },
+  {
+   "scenario": "volatile-head",
+   "index": 1,
+   "cache_write": 11776,
+   "cache_read": 9173,
+   "uncached_input": 2,
+   "output_tokens": 94,
+   "cost_usd": 0.00249413,
+   "duration_ms": 1273,
+   "error": ""
+  },
+  {
+   "scenario": "volatile-head",
+   "index": 2,
+   "cache_write": 11775,
+   "cache_read": 9173,
+   "uncached_input": 2,
+   "output_tokens": 86,
+   "cost_usd": 0.0024899300000000004,
+   "duration_ms": 1471,
+   "error": ""
+  },
+  {
+   "scenario": "volatile-head",
+   "index": 3,
+   "cache_write": 11778,
+   "cache_read": 9173,
+   "uncached_input": 2,
+   "output_tokens": 116,
+   "cost_usd": 0.00250553,
+   "duration_ms": 1568,
+   "error": ""
+  },
+  {
+   "scenario": "volatile-tail",
+   "index": 0,
+   "cache_write": 11775,
+   "cache_read": 9173,
+   "uncached_input": 2,
+   "output_tokens": 139,
+   "cost_usd": 0.0025164300000000005,
+   "duration_ms": 1422,
+   "error": ""
+  },
+  {
+   "scenario": "volatile-tail",
+   "index": 1,
+   "cache_write": 11774,
+   "cache_read": 9173,
+   "uncached_input": 2,
+   "output_tokens": 101,
+   "cost_usd": 0.00249723,
+   "duration_ms": 1277,
+   "error": ""
+  },
+  {
+   "scenario": "volatile-tail",
+   "index": 2,
+   "cache_write": 11775,
+   "cache_read": 9173,
+   "uncached_input": 2,
+   "output_tokens": 121,
+   "cost_usd": 0.00250743,
+   "duration_ms": 1599,
+   "error": ""
+  },
+  {
+   "scenario": "volatile-tail",
+   "index": 3,
+   "cache_write": 11775,
+   "cache_read": 9173,
+   "uncached_input": 2,
+   "output_tokens": 111,
+   "cost_usd": 0.0025024300000000004,
+   "duration_ms": 1342,
+   "error": ""
+  }
+ ]
+}
