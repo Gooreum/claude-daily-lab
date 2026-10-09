@@ -1,0 +1,7 @@
+{
+  "name": "token-pet",
+  "version": "0.1.0",
+  "description": "A pet that lives in a pane: fed by each turn's tokens, dozes when idle, falls ill on errors, and cheers after a long turn",
+  "author": { "name": "claude-daily-lab" },
+  "types": "./types/index.d.ts"
+}
