@@ -1,0 +1,309 @@
+{
+  "title": "마피아 게임 규칙 스토리보드",
+  "scenes": [
+    {
+      "caption": "밤이 되면 마피아가 깨어난다",
+      "duration_s": 3,
+      "bg": "#0f172a",
+      "shapes": [
+        {
+          "kind": "circle",
+          "x": 30,
+          "y": 40,
+          "w": 15,
+          "h": 15,
+          "color": "#facc15",
+          "anim": "fade",
+          "delay_s": 0
+        },
+        {
+          "kind": "circle",
+          "x": 70,
+          "y": 45,
+          "w": 12,
+          "h": 12,
+          "color": "#ef4444",
+          "anim": "pulse",
+          "delay_s": 0.8
+        },
+        {
+          "kind": "text",
+          "x": 30,
+          "y": 62,
+          "w": 25,
+          "h": 8,
+          "color": "#f8fafc",
+          "anim": "fade",
+          "delay_s": 0.3,
+          "label": "밤"
+        },
+        {
+          "kind": "text",
+          "x": 70,
+          "y": 62,
+          "w": 25,
+          "h": 8,
+          "color": "#f8fafc",
+          "anim": "fade",
+          "delay_s": 1.2,
+          "label": "마피아"
+        }
+      ]
+    },
+    {
+      "caption": "밤: 마피아가 시민 한 명을 제거한다",
+      "duration_s": 3.5,
+      "bg": "#0f172a",
+      "shapes": [
+        {
+          "kind": "rect",
+          "x": 20,
+          "y": 55,
+          "w": 12,
+          "h": 15,
+          "color": "#38bdf8",
+          "anim": "slide-up",
+          "delay_s": 0
+        },
+        {
+          "kind": "rect",
+          "x": 40,
+          "y": 55,
+          "w": 12,
+          "h": 15,
+          "color": "#38bdf8",
+          "anim": "slide-up",
+          "delay_s": 0.2
+        },
+        {
+          "kind": "rect",
+          "x": 60,
+          "y": 55,
+          "w": 12,
+          "h": 15,
+          "color": "#38bdf8",
+          "anim": "slide-up",
+          "delay_s": 0.4
+        },
+        {
+          "kind": "circle",
+          "x": 85,
+          "y": 30,
+          "w": 12,
+          "h": 12,
+          "color": "#ef4444",
+          "anim": "grow",
+          "delay_s": 0.8
+        },
+        {
+          "kind": "text",
+          "x": 85,
+          "y": 42,
+          "w": 20,
+          "h": 8,
+          "color": "#f8fafc",
+          "anim": "fade",
+          "delay_s": 1,
+          "label": "마피아"
+        },
+        {
+          "kind": "text",
+          "x": 40,
+          "y": 30,
+          "w": 40,
+          "h": 8,
+          "color": "#f8fafc",
+          "anim": "fade",
+          "delay_s": 1.5,
+          "label": "시민 1명 제거"
+        }
+      ]
+    },
+    {
+      "caption": "낮: 모두가 모여 토론한다",
+      "duration_s": 3,
+      "bg": "#0f172a",
+      "shapes": [
+        {
+          "kind": "text",
+          "x": 50,
+          "y": 18,
+          "w": 30,
+          "h": 8,
+          "color": "#f8fafc",
+          "anim": "fade",
+          "delay_s": 0,
+          "label": "낮 토론"
+        },
+        {
+          "kind": "circle",
+          "x": 15,
+          "y": 50,
+          "w": 10,
+          "h": 10,
+          "color": "#38bdf8",
+          "anim": "fade",
+          "delay_s": 0.2
+        },
+        {
+          "kind": "circle",
+          "x": 32,
+          "y": 50,
+          "w": 10,
+          "h": 10,
+          "color": "#38bdf8",
+          "anim": "fade",
+          "delay_s": 0.4
+        },
+        {
+          "kind": "circle",
+          "x": 50,
+          "y": 50,
+          "w": 10,
+          "h": 10,
+          "color": "#38bdf8",
+          "anim": "fade",
+          "delay_s": 0.6
+        },
+        {
+          "kind": "circle",
+          "x": 68,
+          "y": 50,
+          "w": 10,
+          "h": 10,
+          "color": "#38bdf8",
+          "anim": "fade",
+          "delay_s": 0.8
+        },
+        {
+          "kind": "circle",
+          "x": 85,
+          "y": 50,
+          "w": 10,
+          "h": 10,
+          "color": "#38bdf8",
+          "anim": "fade",
+          "delay_s": 1
+        }
+      ]
+    },
+    {
+      "caption": "투표로 한 명을 처형한다",
+      "duration_s": 3.5,
+      "bg": "#0f172a",
+      "shapes": [
+        {
+          "kind": "text",
+          "x": 50,
+          "y": 18,
+          "w": 30,
+          "h": 8,
+          "color": "#f8fafc",
+          "anim": "fade",
+          "delay_s": 0,
+          "label": "투표"
+        },
+        {
+          "kind": "arrow",
+          "x": 50,
+          "y": 32,
+          "w": 10,
+          "h": 8,
+          "color": "#facc15",
+          "anim": "pulse",
+          "delay_s": 0.5
+        },
+        {
+          "kind": "circle",
+          "x": 50,
+          "y": 52,
+          "w": 14,
+          "h": 14,
+          "color": "#ef4444",
+          "anim": "grow",
+          "delay_s": 1
+        },
+        {
+          "kind": "circle",
+          "x": 25,
+          "y": 70,
+          "w": 8,
+          "h": 8,
+          "color": "#38bdf8",
+          "anim": "fade",
+          "delay_s": 0.3
+        },
+        {
+          "kind": "circle",
+          "x": 75,
+          "y": 70,
+          "w": 8,
+          "h": 8,
+          "color": "#38bdf8",
+          "anim": "fade",
+          "delay_s": 0.5
+        },
+        {
+          "kind": "text",
+          "x": 50,
+          "y": 85,
+          "w": 40,
+          "h": 8,
+          "color": "#f8fafc",
+          "anim": "fade",
+          "delay_s": 1.5,
+          "label": "한 명 처형"
+        }
+      ]
+    },
+    {
+      "caption": "마피아를 모두 찾으면 시민 승리!",
+      "duration_s": 4,
+      "bg": "#0f172a",
+      "shapes": [
+        {
+          "kind": "text",
+          "x": 50,
+          "y": 25,
+          "w": 50,
+          "h": 10,
+          "color": "#f8fafc",
+          "anim": "slide-up",
+          "delay_s": 0,
+          "label": "마피아 전멸"
+        },
+        {
+          "kind": "rect",
+          "x": 50,
+          "y": 55,
+          "w": 50,
+          "h": 16,
+          "color": "#38bdf8",
+          "anim": "grow",
+          "delay_s": 0.6,
+          "label": "시민 승리"
+        },
+        {
+          "kind": "circle",
+          "x": 25,
+          "y": 45,
+          "w": 8,
+          "h": 8,
+          "color": "#38bdf8",
+          "anim": "pulse",
+          "delay_s": 1.2
+        },
+        {
+          "kind": "circle",
+          "x": 75,
+          "y": 45,
+          "w": 8,
+          "h": 8,
+          "color": "#38bdf8",
+          "anim": "pulse",
+          "delay_s": 1.4
+        }
+      ]
+    }
+  ]
+}
