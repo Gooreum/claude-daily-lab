@@ -8,7 +8,7 @@
 
 매일 **06:45 KST**에 예약 작업이 자동 실행되며 다음 순서로 진행합니다.
 
-1. **수집** — 최근 48시간의 Claude/Anthropic 소식을 모아 `news/YYYY-MM-DD.md`에 정리
+1. **수집** — 최근 48시간의 Claude/Anthropic 소식을 모아 `news/YYYY-MM-DD.md`에 정리. 항목마다 현실 적용 아이디어 5가지 이상을 함께 적는다
 2. **주제 선정** — 오늘 직접 만들어볼 만한 것 하나를 고름
 3. **제작·테스트** — `days/YYYY-MM-DD-<slug>/`에 만들고 실제로 실행해 동작 확인
 4. **README 작성** — `_template/README.md`의 7개 섹션을 채움
