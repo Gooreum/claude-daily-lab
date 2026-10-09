@@ -12,11 +12,15 @@
 - 최근 **48시간**의 Claude/Anthropic 소식을 수집한다.
 - 우선 출처:
   - https://www.anthropic.com/news
+  - https://www.anthropic.com/engineering — 에이전트 설계·컨텍스트 관리 같은 개발자 글
   - https://claude.com/blog
-  - Claude Code 문서와 GitHub `anthropics/claude-code` 릴리스
-  - docs.claude.com API 릴리스 노트
+  - https://claude.dev/blog — 자동화·에이전트 참조 구현 글
+  - Claude Code 문서와 GitHub `anthropics/claude-code` 릴리스 (https://code.claude.com/docs/en/changelog)
+  - docs.claude.com 릴리스 노트 모음: https://docs.claude.com/en/release-notes/overview (API, Claude 앱, Claude Code)
   - support.claude.com 릴리스 노트
-  - 신뢰할 만한 개발자 블로그
+  - GitHub 피드 (Atom, 증분 읽기 가능): `anthropics/anthropic-sdk-python`·`anthropic-sdk-typescript`·`claude-agent-sdk-python`·`claude-agent-sdk-typescript` 릴리스, `anthropics/claude-cookbooks` 커밋(https://github.com/anthropics/claude-cookbooks/commits/main.atom)
+  - 신뢰할 만한 개발자 블로그: Simon Willison의 Claude 태그(https://simonwillison.net/tags/claude.atom) 등
+  - anthropic.com·claude.com에는 RSS가 없다. Reddit·HN 같은 커뮤니티 피드는 봇 차단이 잦아 우선 출처로 쓰지 않는다.
 - 결과를 `news/YYYY-MM-DD.md`에 항목별로 기록한다. 항목마다 **제목, 날짜, 출처 URL, 2~3문장 요약**을 쓴다.
 - 항목마다 **현실 적용 아이디어를 5가지 이상** 적는다. 소식을 스크랩만 하고 끝내지 않고, "이걸 어디에 써먹을 수 있나"까지 쓴다.
   - 한 줄에 하나씩, `어디에(팀·제품·워크플로) → 무엇을 → 왜 이득` 순서로 쓴다.
