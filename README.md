@@ -41,6 +41,7 @@ claude-daily-lab/
 <!-- 최신 항목이 위로 오도록 이 줄 아래에 행을 추가 -->
 | 날짜 | 이름 | 종류 | 계기가 된 소식 | 한 줄 설명 |
 |------|------|------|----------------|------------|
+| 2026-10-10 | [haiku-mafia](days/2026-10-10-haiku-mafia/) | CLI 스크립트 | [Claude Haiku 5.5 출시](https://www.anthropic.com/claude-haiku-5-5) | Haiku 5.5 다섯 명이 서로 속이는 마피아 게임. 플레이어 한 발언 = `claude -p` 구조화 출력 한 번, 한 판 44초·$0.03. dry-run 대본 봇·엔진 테스트 14건·실제 판 기록 포함 |
 | 2026-10-10 | [claude-tamagotchi](days/2026-10-10-claude-tamagotchi/) | Claude Code 모드 | [Claude Code 2.1.295: 모드 pane·`$.ui.notify`·`$.store`](https://code.claude.com/docs/en/changelog) | pane에 사는 토큰 펫. 턴마다 쓴 토큰이 밥, 1분마다 배가 꺼지고, 도구 실패 3번에 앓고, 30초 넘는 턴엔 자랑하며 알림. 세션 사이에도 살아 있음. plugin test·tsc·실제 세션 e2e 포함 |
 | 2026-10-10 | [feed-bookmark](days/2026-10-10-feed-bookmark/) | CLI 스크립트 | [Building effective agent automations](https://claude.dev/blog/building-effective-agent-automations/) | 소스별 북마크로 Atom/RSS를 증분 읽고, 실패한 소스는 "조용함"이 아니라 "읽기 불가"로 보고하는 피드 리더. 기본 소스는 Claude Code·SDK GitHub 릴리스 4개, fixture 테스트·실제 피드 e2e 포함 |
 | 2026-10-10 | [turn-notify-mod](days/2026-10-10-turn-notify-mod/) | Claude Code 모드 | [Claude Code 2.1.295: 모드용 `$.ui.notify`](https://code.claude.com/docs/en/changelog) | 턴마다 소요 시간·토큰을 답변 아래 표시하고 30초 넘는 턴은 네이티브 알림. `/turnstats` 누계, plugin test·실제 세션 e2e 포함 |
