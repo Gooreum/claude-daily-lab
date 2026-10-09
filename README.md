@@ -41,6 +41,7 @@ claude-daily-lab/
 <!-- 최신 항목이 위로 오도록 이 줄 아래에 행을 추가 -->
 | 날짜 | 이름 | 종류 | 계기가 된 소식 | 한 줄 설명 |
 |------|------|------|----------------|------------|
+| 2026-10-10 | [model-caps](days/2026-10-10-model-caps/) | CLI 스크립트 | [API 릴리스 노트 10-01~06: Models API `line`·`thinking.types.disabled`·`server_tools`](https://platform.claude.com/docs/en/release-notes/api) | `GET /v1/models` 응답을 모델별 컨텍스트·출력·thinking 허용·effort·web/code 도구 Markdown 표로. 스냅샷 간 추가·퇴역·능력 변경 diff와 `--latest haiku`. 키 없으면 예시 데이터 dry-run. 테스트 19건. 실호출은 키가 없어 미검증 |
 | 2026-10-10 | [selection-lens](days/2026-10-10-selection-lens/) | Claude Code 모드 | [Claude Code 2.1.288: 모드용 `$.ui.selection()`](https://code.claude.com/docs/en/changelog) | 트랜스크립트에서 드래그한 텍스트를 `/lens`로 받아 세션 자격 증명 그대로 `$.model.complete(haiku)`에 번역·설명·요약을 묻고 pane에 최근 5건과 비용을 쌓는 모드. 선택 없으면 `/lens ko -- <text>`. plugin test 9건·e2e 4건(실호출) 포함 |
 | 2026-10-10 | [cache-meter](days/2026-10-10-cache-meter/) | CLI 스크립트 | [API 릴리스 노트 10-07: Sonnet 5.5 캐시 읽기 반값](https://platform.claude.com/docs/en/release-notes/api) | 2만 토큰 시스템 프롬프트를 N회 호출하며 캐시 읽기·쓰기·비용을 ASCII로. 시각·난수를 앞에 넣든 뒤에 넣든 Claude Code에서는 똑같이 캐시가 깨지고 비용 2배라는 걸 실측. dry-run·테스트 14건·실제 결과 포함 |
 | 2026-10-10 | [effort-race](days/2026-10-10-effort-race/) | CLI 스크립트 | [Claude Code 2.1.292: Agent `effort` 파라미터](https://code.claude.com/docs/en/changelog) | 함정 문제 8개를 effort low~max 다섯 레인에 동시에 던져 정답률·시간·생각 토큰·비용을 ASCII 막대그래프로. Haiku 5.5 40회 57초. dry-run·테스트 12건·실제 결과 포함 |

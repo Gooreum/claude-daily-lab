@@ -1,0 +1,3 @@
+snapshots/*.json
+!snapshots/.gitkeep
+__pycache__/
