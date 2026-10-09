@@ -1,0 +1,8 @@
+# 비밀값 탐지 정규식 (grep -E). '#'로 시작하는 줄과 빈 줄은 무시.
+# 형식: <이름>\t<정규식>
+aws-access-key	AKIA[0-9A-Z]{16}
+anthropic-api-key	sk-ant-[A-Za-z0-9_-]{20,}
+github-token	gh[pousr]_[A-Za-z0-9]{36,}
+slack-token	xox[baprs]-[0-9A-Za-z-]{10,}
+private-key-block	-----BEGIN (RSA |EC |OPENSSH |DSA |PGP )?PRIVATE KEY-----
+generic-secret-assign	(api[_-]?key|secret|password|token)["']?[[:space:]]*[:=][[:space:]]*["'][^"'[:space:]]{16,}["']
