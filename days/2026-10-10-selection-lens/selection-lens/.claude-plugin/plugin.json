@@ -1,0 +1,7 @@
+{
+  "name": "selection-lens",
+  "version": "0.1.0",
+  "description": "Select text in the transcript, run /lens, and get it translated or explained in a pane through the session's own model client ($.ui.selection + $.model.complete)",
+  "author": { "name": "claude-daily-lab" },
+  "types": "./types/index.d.ts"
+}

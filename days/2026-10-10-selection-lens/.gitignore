@@ -1,0 +1,3 @@
+selection-lens/.claude-plugin/types/
+selection-lens/tsconfig.json
+selection-lens/**/*.js
