@@ -1,0 +1,19 @@
+# danger-guard 규칙. 한 줄에 `이름<TAB>이유<TAB>플래그<TAB>ERE`. 플래그: i=대소문자 무시, cs=구분, nowhere=명령에 WHERE가 있으면 통과. 쉼표로 여럿. #으로 시작하면 주석.
+# 정규식은 조기 경보일 뿐이다. 되돌릴 수 없는 작업의 진짜 방어선은 서버 쪽(브랜치 보호, DB 권한)에 둔다.
+git-force-push	원격 이력을 덮어쓴다 (--force-with-lease 포함). 사람이 직접 실행한다	i	git\s+push\b.*(\s--force(-with-lease)?\b|\s-f\b|\s-[a-z]*f[a-z]*\s)
+git-reset-hard	작업 트리와 인덱스를 버린다	i	git\s+reset\s+(.*\s)?--hard\b
+git-clean-force	추적되지 않는 파일을 지운다	i	git\s+clean\b.*\s-[a-z]*f
+git-checkout-all	모든 변경을 버린다	i	git\s+(checkout|restore)\s+(--\s+)?\.(\s|$)
+git-branch-force-delete	머지 안 된 브랜치를 지운다	cs	git\s+branch\s+(.*\s)?-D\b
+git-push-delete	원격 브랜치를 지운다	i	git\s+push\b.*(\s--delete\b|\s:[a-z0-9_/.-]+)
+sql-drop	테이블/DB/스키마를 지운다	i	\b(drop\s+(table|database|schema)|truncate(\s+table)?)\s
+sql-delete-no-where	WHERE 없는 DELETE	i,nowhere	\bdelete\s+from\s+[a-z0-9_".]+
+sql-update-no-where	WHERE 없는 UPDATE	i,nowhere	\bupdate\s+[a-z0-9_".]+\s+set\s
+curl-pipe-shell	원격 스크립트를 바로 실행한다	i	\b(curl|wget)\b[^|;&]*\|\s*(sudo\s+)?(ba|z|da|k)?sh\b
+rm-rf-root	루트·홈·현재 디렉터리를 통째로 지운다	i	\brm\s+(-[a-z]*\s+)*-[a-z]*(rf|fr)[a-z]*\s+(--\s+)?("|')?(/|~|\$home|\.|\*)("|')?(\s|$)
+chmod-777-recursive	권한을 전부 연다	i	\bchmod\s+(-[a-z]*r[a-z]*\s+)?777\s|\bchmod\s+777\s+(-r|--recursive)
+kubectl-destructive	네임스페이스 삭제 또는 prod 네임스페이스 변경	i	\bkubectl\b.*(\sdelete\s+(ns|namespace)\b|\s(delete|apply|scale|rollout)\b.*(\s-n\s*prod|--namespace[= ]prod))
+terraform-destroy	인프라를 지운다	i	\bterraform\s+(.*\s)?(destroy\b|apply\b.*-auto-approve)
+psql-prod	운영 DB에 직접 접속한다	i	\b(psql|mysql|mongo(sh)?)\b.*\b(prod|production)\b
+docker-prune-all	이미지·볼륨을 전부 지운다	i	\bdocker\s+(system|volume)\s+prune\b.*(\s-a\b|--all|--volumes)
+disk-wipe	디스크를 덮어쓴다	i	\b(mkfs(\.[a-z0-9]+)?|dd\s+.*of=/dev/)\b
