@@ -1,0 +1,73 @@
+# daily-lab.yml — 매일 06:45 KST(21:45 UTC)에 /daily-lab 스킬을 GitHub Actions에서 돌린다. 맥북이 꺼져 있어도 된다.
+# 준비물(한 번만): 로컬에서 `claude setup-token` → 저장소 시크릿 CLAUDE_CODE_OAUTH_TOKEN 에 저장 (gh secret set CLAUDE_CODE_OAUTH_TOKEN)
+# 푸시는 워크플로의 GITHUB_TOKEN으로 한다(Claude GitHub App 설치 불필요). 이 토큰의 푸시는 ci.yml을 다시 트리거하지 않지만, 스킬이 test.sh를 직접 돌린다.
+# 시크릿이 없으면 아무것도 하지 않고 성공으로 끝난다(실패 알림이 매일 오지 않게).
+name: Daily Lab
+
+on:
+  schedule:
+    - cron: "45 21 * * *"   # 06:45 Asia/Seoul
+  workflow_dispatch:
+    inputs:
+      args:
+        description: "/daily-lab 인자 (예: --no-build, --force, 2026-10-11)"
+        required: false
+        default: ""
+
+concurrency:
+  group: daily-lab
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    permissions:
+      contents: write
+      id-token: write
+      actions: read
+    steps:
+      - name: 시크릿 확인
+        id: gate
+        env:
+          HAS_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN != '' }}
+        run: |
+          if [ "$HAS_TOKEN" != "true" ]; then
+            echo "CLAUDE_CODE_OAUTH_TOKEN 시크릿이 없어 건너뜁니다. 로컬에서 'claude setup-token'을 실행해 저장소 시크릿으로 넣으세요."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.gate.outputs.ready == 'true'
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        if: steps.gate.outputs.ready == 'true'
+        with:
+          node-version: "22"
+
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.ready == 'true'
+        with:
+          python-version: "3.12"
+
+      - name: git 사용자
+        if: steps.gate.outputs.ready == 'true'
+        run: |
+          git config user.name "claude-daily-lab"
+          git config user.email "claude-daily-lab@users.noreply.github.com"
+
+      - name: /daily-lab
+        if: steps.gate.outputs.ready == 'true'
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          prompt: "/daily-lab ${{ github.event.inputs.args }}"
+          claude_args: |
+            --max-turns 120
+            --permission-mode acceptEdits
+            --allowedTools "Bash,Read,Write,Edit,Glob,Grep,WebFetch,WebSearch"

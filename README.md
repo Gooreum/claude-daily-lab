@@ -14,6 +14,16 @@
 4. **README 작성** — `_template/README.md`의 7개 섹션을 채움
 5. **main 푸시** — 루트 README의 결과물 목록을 갱신하고 `main`에 바로 푸시
 
+이 절차는 저장소 안의 스킬 **`/daily-lab`**(`.claude/skills/daily-lab/SKILL.md`)에 담겨 있어 어디서 불러도 같은 순서로 돈다.
+
+| 어디서 | 어떻게 | 맥북이 꺼져 있어도 |
+|---|---|---|
+| 로컬 터미널 | 이 저장소에서 `claude` 실행 후 `/daily-lab` | ✗ |
+| **Routine** (claude.ai/code/routines) | 저장소 `Gooreum/claude-daily-lab`, 프롬프트 `/daily-lab`, 매일 06:45, 환경 네트워크 **Full**. `/schedule`로 터미널에서도 만든다 | ✓ (구독 사용량) |
+| GitHub Actions | `.github/workflows/daily-lab.yml`이 21:45 UTC(06:45 KST)에 실행. 시크릿 `CLAUDE_CODE_OAUTH_TOKEN`(`claude setup-token`으로 발급) 하나만 있으면 된다. 없으면 조용히 건너뛴다 | ✓ |
+
+수집만 하려면 `/daily-lab --no-build`, 오늘 폴더가 있어도 다시 돌리려면 `/daily-lab --force`.
+
 ## 폴더 구조
 
 ```
@@ -21,9 +31,11 @@ claude-daily-lab/
 ├── README.md                 # 이 파일. 프로젝트 소개와 결과물 목록
 ├── RULES.md                  # 예약 작업이 매일 읽고 따르는 운영 규칙
 ├── _template/README.md       # 날짜별 프로젝트 README 템플릿
+├── .claude/skills/daily-lab/ # 하루 루틴 스킬 (/daily-lab)
 ├── news/                     # 날짜별 소식 수집 결과 (YYYY-MM-DD.md)
 ├── days/                     # 날짜별 프로젝트 (YYYY-MM-DD-<slug>/)
-└── .github/workflows/ci.yml  # 변경된 프로젝트 폴더의 test.sh 실행
+├── .github/workflows/ci.yml  # 변경된 프로젝트 폴더의 test.sh 실행
+└── .github/workflows/daily-lab.yml  # 06:45 KST에 /daily-lab 실행 (시크릿 있을 때)
 ```
 
 ## 모노레포 운영 원칙
