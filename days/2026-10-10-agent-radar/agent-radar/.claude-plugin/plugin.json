@@ -1,0 +1,7 @@
+{
+  "name": "agent-radar",
+  "version": "0.1.0",
+  "description": "A pane that shows which subagents are running right now, by type, with elapsed time, tool calls and tokens; /radar summarizes them in one line",
+  "author": { "name": "claude-daily-lab" },
+  "types": "./types/index.d.ts"
+}
