@@ -401,10 +401,16 @@
 
 ## 다음 주제 선정 (2절 기준)
 
-**1순위: 프롬프트 캐시 측정기 (14번)** — `claude -p --output-format json`의 `cache_read_input_tokens`·`cache_creation_input_tokens`·`total_cost_usd`로 같은 시스템 프롬프트를 N회 호출하며 캐시 적중률과 누적 비용 곡선을 ASCII로 그리는 CLI. 날짜·난수를 프롬프트에 섞어 캐시가 깨지는 "조용한 무효화"를 재현해 비교한다. 키 없이 돌아가고, Sonnet 5.5 캐시 반값이 계기이며, effort-race와 지표가 다르다.
+**1순위 ✅ 완료 → `days/2026-10-10-cache-meter/`: 프롬프트 캐시 측정기 (14번)** — `claude -p --output-format json`의 `cache_read_input_tokens`·`cache_creation_input_tokens`·`total_cost_usd`로 같은 시스템 프롬프트를 N회 호출하며 캐시 적중률과 누적 비용 곡선을 ASCII로 그리는 CLI. 날짜·난수를 프롬프트에 섞어 캐시가 깨지는 "조용한 무효화"를 재현해 비교한다. 키 없이 돌아가고, Sonnet 5.5 캐시 반값이 계기이며, effort-race와 지표가 다르다.
 
-**2순위: 선택 영역 모드 (18번)** — `$.ui.selection()`으로 트랜스크립트에서 선택한 텍스트를 받아 번역·설명을 pane에 띄우는 모드. 모드 API 학습 가치가 크고 token-pet과 결합 가능. selection API 문서를 먼저 읽어야 하고 `-p` e2e가 어렵다.
+**2순위 ✅ 완료 → `days/2026-10-10-selection-lens/`: 선택 영역 모드 (18번)** — `$.ui.selection()`으로 트랜스크립트에서 선택한 텍스트를 받아 번역·설명을 pane에 띄우는 모드. 모드 API 학습 가치가 크고 token-pet과 결합 가능. selection API 문서를 먼저 읽어야 하고 `-p` e2e가 어렵다.
 
-**3순위: 모델 능력표 생성기 (17번)** — Models API로 모델별 컨텍스트·출력·thinking·server_tools 표를 Markdown으로. API 키가 필요해 dry-run이 주가 된다.
+**3순위 ✅ 완료 → `days/2026-10-10-model-caps/`: 모델 능력표 생성기 (17번)** — Models API로 모델별 컨텍스트·출력·thinking·server_tools 표를 Markdown으로. API 키가 필요해 dry-run이 주가 된다.
 
-보류: 13번(Managed Agents 전용·유료), 15번 SDK 도구 클래스(키 필요), 6번 eval 힐클라이밍(한 세션에 끝내기 어려움), 10번 클라우드 세션(측정·검증이 어려움).
+**4순위 ✅ 완료 → `days/2026-10-10-idea-grader/`: 현실 적용 아이디어 채점 eval (6번)** — 블로그의 힐클라이밍 전체가 아니라 "이 저장소의 현실 적용 목록을 채점하는 eval" 한 조각만 떼어 만들었다. 규칙 채점은 실제 파일에서 95~98점으로 포화됐고 여유는 Haiku 판정 쪽에 있다는 결과.
+
+**5순위: 서브에이전트 종류 상태 줄 (19번)** — `subagentStatusLine`의 `agentType`으로 지금 어떤 종류의 서브에이전트가 도는지 표시. token-pet pane에 "탐색 중/구현 중" 붙이기. 모드 테스트 하네스로 검증 가능.
+
+**6순위: 재난 방지 훅 묶음 (27번)** — 파괴적 git·SQL·curl-to-shell 차단 + `onFailure: "block"` + `npm run *`만 허용. onfailure-secret-guard와 패턴 합집합. 설정 파일과 훅 스크립트, 테스트는 셸로.
+
+보류: 13번(Managed Agents 전용·유료), 15번 SDK 도구 클래스(키 필요), 10번 클라우드 세션(측정·검증이 어려움). 6번의 나머지(train/test 분리 힐클라이밍)는 idea-grader의 `--compare --judge`로 이어서.
