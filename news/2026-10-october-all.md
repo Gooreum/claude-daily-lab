@@ -409,8 +409,8 @@
 
 **4순위 ✅ 완료 → `days/2026-10-10-idea-grader/`: 현실 적용 아이디어 채점 eval (6번)** — 블로그의 힐클라이밍 전체가 아니라 "이 저장소의 현실 적용 목록을 채점하는 eval" 한 조각만 떼어 만들었다. 규칙 채점은 실제 파일에서 95~98점으로 포화됐고 여유는 Haiku 판정 쪽에 있다는 결과.
 
-**5순위: 서브에이전트 종류 상태 줄 (19번)** — `subagentStatusLine`의 `agentType`으로 지금 어떤 종류의 서브에이전트가 도는지 표시. token-pet pane에 "탐색 중/구현 중" 붙이기. 모드 테스트 하네스로 검증 가능.
+**5순위 ✅ 완료 → `days/2026-10-10-agent-radar/`: 서브에이전트 종류 상태 줄 (19번)** — `subagentStatusLine`의 `agentType`으로 지금 어떤 종류의 서브에이전트가 도는지 표시. token-pet pane에 "탐색 중/구현 중" 붙이기. 모드 테스트 하네스로 검증 가능.
 
-**6순위: 재난 방지 훅 묶음 (27번)** — 파괴적 git·SQL·curl-to-shell 차단 + `onFailure: "block"` + `npm run *`만 허용. onfailure-secret-guard와 패턴 합집합. 설정 파일과 훅 스크립트, 테스트는 셸로.
+**6순위 ✅ 완료 → `days/2026-10-10-disaster-guard/`: 재난 방지 훅 묶음 (27번)** — 파괴적 git·SQL·curl-to-shell 차단 + `onFailure: "block"` + `npm run *`만 허용. onfailure-secret-guard와 패턴 합집합. 설정 파일과 훅 스크립트, 테스트는 셸로.
 
 보류: 13번(Managed Agents 전용·유료), 15번 SDK 도구 클래스(키 필요), 10번 클라우드 세션(측정·검증이 어려움). 6번의 나머지(train/test 분리 힐클라이밍)는 idea-grader의 `--compare --judge`로 이어서.
