@@ -1,0 +1,5 @@
+llm:
+  model: claude-3-5-haiku-latest
+  temperature: 1
+  top_p: 0.99
+  max_tokens: 8000
