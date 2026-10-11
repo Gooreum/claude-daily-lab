@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "secret-envoy": {
+      "command": "python3",
+      "args": ["days/2026-10-11-secret-envoy/secret_envoy.py", "serve", "--backend", "keychain", "--names", "DB_URL,OPENWEATHER_KEY"],
+      "env": {}
+    }
+  }
+}
