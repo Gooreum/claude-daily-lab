@@ -55,7 +55,8 @@ def build(root, date, status, note):
         incomplete = oneliner.startswith("⚠")
         md = read(os.path.join(d, "README.md"))
         tests = section(md, 5)
-        tally = re.findall(r"^.*(?:통과|passed|PASS).*$", tests, re.M)
+        # 집계 줄("통과 20 · 실패 0", "27 passed", "Ran 27 tests … OK")을 우선하고, 없으면 문장 속 "통과"는 쓰지 않는다
+        tally = re.findall(r"^.*(?:통과[ \t]*\d+|\d+[ \t]*(?:passed|통과)|Ran \d+ tests?).*$", tests, re.M)
         what = section(md, 1).split("\n\n")[0]
         subject_bits.append(f"{'⚠ 미완 ' if incomplete else ''}{slug}")
         lines += [
