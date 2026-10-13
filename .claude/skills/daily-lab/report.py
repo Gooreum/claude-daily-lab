@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """report.py — /daily-lab이 끝난 뒤 "한눈에 보는" 요약 알림(제목·본문)을 만든다 (표준 라이브러리만).
 
-재료는 그날 폴더의 SUMMARY.md(스킬이 4·5단계에서 쓴다). 형식:
+재료: news/<날짜>.md의 항목 제목·"오늘의 선정"(수집한 소식, ⭐=고른 것)과 그날 폴더의 SUMMARY.md(개발한 것). SUMMARY.md 형식:
   - 한 줄: <무엇을 만들었나, 쉬운 말 한 문장>
   - 왜: <계기 한 문장>
   - 쓰는 법: <한 문장>
@@ -39,6 +39,26 @@ def summary_fields(folder):
     return out
 
 
+def news_items(root, date):
+    """news/<날짜>.md의 항목 제목과, "오늘의 선정"에서 고른 번호들."""
+    news = read(os.path.join(root, "news", f"{date}.md"))
+    items = re.findall(r"^## (\d+)\. (.+)$", news, re.M)
+    pick = re.search(r"^## 오늘의 선정\s*$(.*?)(?=^## |\Z)", news, re.S | re.M)
+    picked = set(re.findall(r"(\d+)번", pick.group(1).strip().splitlines()[0])) if pick and pick.group(1).strip() else set()
+    return [(n, t.strip()) for n, t in items], picked
+
+
+def news_block(root, date, repo):
+    items, picked = news_items(root, date)
+    if not items:
+        return ["### 📰 수집한 소식", "오늘 수집한 소식이 없습니다."]
+    out = [f"### 📰 수집한 소식 {len(items)}건"]
+    for n, t in items:
+        out.append(f"{n}. {'⭐ ' if n in picked else ''}{t}")
+    out += ["", f"⭐ = 오늘 개발 주제로 고른 소식 · [소식 전문]({repo}/blob/main/news/{date}.md)"]
+    return out
+
+
 def fallback_line(root, date, slug):
     row = next((ln for ln in read(os.path.join(root, "README.md")).splitlines()
                 if f"days/{date}-{slug}/" in ln), "")
@@ -54,12 +74,14 @@ def build(root, date, status, run_url):
     tag = f"[Daily Lab {md.month}/{md.day}]"
     days = sorted(glob.glob(os.path.join(root, "days", f"{date}-*")))
     run = f"[실행 기록]({run_url})" if run_url else ""
+    n_news = len(news_items(root, date)[0])
+    news = news_block(root, date, repo)
 
     if not days:
-        title = f"{tag} ❌ 오늘은 못 만들었어요"
-        body = ["### 오늘은 결과물이 없어요",
-                "루틴이 중간에 멈췄습니다." + (f" 원인은 {run}에서 볼 수 있어요." if run else "")]
-        return title, "\n\n".join(body) + "\n"
+        title = f"{tag} 소식 {n_news}건 수집 · ❌ 개발 못 함"
+        body = news + ["", "### 🛠 개발한 것",
+                       "오늘은 결과물이 없습니다. 루틴이 중간에 멈췄습니다." + (f" 원인은 {run}에서 볼 수 있어요." if run else "")]
+        return title, "\n".join(body).strip() + "\n"
 
     folder = days[0]
     slug = os.path.basename(folder)[len(date) + 1:]
@@ -67,16 +89,16 @@ def build(root, date, status, run_url):
     line = f.get("line") or fallback_line(root, date, slug)
     result = f.get("result", "")
     warn = "❌ " if status == "failed" else ("⚠ " if result.startswith(("⚠", "❌")) else "")
-    title = f"{tag} {warn}{line}"
+    title = f"{tag} 소식 {n_news}건 수집 · 개발: {warn}{line}"
 
-    body = ["### 오늘 만든 것", f"**{line}**", ""]
+    dev = ["### 🛠 개발한 것", f"**{line}**", ""]
     for key, label in (("why", "왜"), ("how", "쓰는 법"), ("result", "결과")):
         if f.get(key):
-            body.append(f"- **{label}:** {f[key]}")
+            dev.append(f"- **{label}:** {f[key]}")
     if status == "failed":
-        body.append(f"- **주의:** 루틴이 끝까지 가지 못했습니다. {run}".rstrip())
-    body += ["", f"[자세히 보기 →]({repo}/tree/main/days/{date}-{slug})"]
-    return title, "\n".join(body).strip() + "\n"
+        dev.append(f"- **주의:** 루틴이 끝까지 가지 못했습니다. {run}".rstrip())
+    dev += ["", f"[자세히 보기 →]({repo}/tree/main/days/{date}-{slug})"]
+    return title, "\n".join(news + [""] + dev).strip() + "\n"
 
 
 def main(argv=None):
