@@ -2,7 +2,7 @@
 # 준비물(한 번만): 로컬에서 `claude setup-token` → 저장소 시크릿 CLAUDE_CODE_OAUTH_TOKEN 에 저장 (gh secret set CLAUDE_CODE_OAUTH_TOKEN)
 # 푸시는 워크플로의 GITHUB_TOKEN으로 한다(Claude GitHub App 설치 불필요). 이 토큰의 푸시는 ci.yml을 다시 트리거하지 않지만, 스킬이 test.sh를 직접 돌린다.
 # 시크릿이 없으면 아무것도 하지 않고 성공으로 끝난다(실패 알림이 매일 오지 않게).
-# 요약 메일(선택): 시크릿 DAILY_LAB_SMTP_USER·DAILY_LAB_SMTP_PASS(Gmail 앱 비밀번호)·DAILY_LAB_MAIL_TO. 없으면 메일 단계만 건너뛴다.
+# 요약 알림: 끝나면 봇이 요약 이슈를 올려 저장소 주인을 @멘션하고 바로 닫는다 → GitHub 알림 메일로 도착한다(받는 주소는 GitHub 알림 설정).
 name: Daily Lab
 
 on:
@@ -25,6 +25,7 @@ jobs:
     timeout-minutes: 90
     permissions:
       contents: write
+      issues: write
       id-token: write
       actions: read
     steps:
@@ -73,18 +74,19 @@ jobs:
             --permission-mode acceptEdits
             --allowedTools "Bash,Read,Write,Edit,Glob,Grep,WebFetch,WebSearch"
 
-      - name: 요약 메일
+      - name: 요약 알림 (이슈 + @멘션 → GitHub 알림 메일)
         if: always() && steps.gate.outputs.ready == 'true'
         env:
-          DAILY_LAB_SMTP_USER: ${{ secrets.DAILY_LAB_SMTP_USER }}
-          DAILY_LAB_SMTP_PASS: ${{ secrets.DAILY_LAB_SMTP_PASS }}
-          DAILY_LAB_MAIL_TO: ${{ secrets.DAILY_LAB_MAIL_TO }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           JOB_STATUS: ${{ job.status }}
+          OWNER: ${{ github.repository_owner }}
         run: |
           git pull --ff-only origin main || true
-          if [ "$JOB_STATUS" = "success" ]; then
-            python3 .claude/skills/daily-lab/send_report.py --note "실행 기록: $RUN_URL"
-          else
-            python3 .claude/skills/daily-lab/send_report.py --status failed --note "작업 상태 $JOB_STATUS: $RUN_URL"
-          fi
+          if [ "$JOB_STATUS" = "success" ]; then status=ok; else status=failed; fi
+          R=.claude/skills/daily-lab/report.py
+          title=$(python3 $R --part title --status $status)
+          { echo "@$OWNER"; echo; echo '```text'; python3 $R --part body --status $status --note "작업 상태 $JOB_STATUS · 실행 기록: $RUN_URL"; echo '```'; } > "$RUNNER_TEMP/report.md"
+          url=$(gh issue create --title "$title" --body-file "$RUNNER_TEMP/report.md")
+          gh issue close "$url" --reason completed >/dev/null
+          echo "알림 이슈: $url"

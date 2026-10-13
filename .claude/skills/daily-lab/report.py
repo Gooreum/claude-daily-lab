@@ -1,42 +1,20 @@
 #!/usr/bin/env python3
-"""send_report.py — /daily-lab이 끝난 뒤 오늘 결과를 요약해 메일로 보낸다 (표준 라이브러리만).
+"""report.py — /daily-lab이 끝난 뒤 오늘 결과 요약(제목·본문)을 만든다 (표준 라이브러리만).
 
-설정은 환경변수로만 받는다. 저장소가 공개라 주소·비밀번호를 파일로 커밋하지 않는다.
-  DAILY_LAB_SMTP_USER   보내는 계정 (예: Gmail 주소)
-  DAILY_LAB_SMTP_PASS   SMTP 비밀번호 (Gmail은 앱 비밀번호)
-  DAILY_LAB_MAIL_TO     받는 주소 (없으면 SMTP_USER에게)
-  DAILY_LAB_SMTP_HOST   기본 smtp.gmail.com
-  DAILY_LAB_SMTP_PORT   기본 465 (SSL)
-로컬에서는 ~/.config/daily-lab/mail.env(KEY=VALUE 줄)도 읽는다. 이미 있는 환경변수가 우선한다.
-
-설정이 없으면 "메일 건너뜀"만 찍고 exit 0 (루틴을 실패시키지 않는다). 보내기에 실패하면 exit 1.
-  python3 send_report.py --dry-run              # 보내지 않고 제목·본문만 출력
-  python3 send_report.py --date 2026-10-12
-  python3 send_report.py --status failed --note "CI 작업 실패: <run URL>"
+GitHub Actions의 "요약 알림" 단계가 이 출력으로 이슈를 올리고 @멘션한다 → GitHub 알림 메일로 도착한다.
+  python3 report.py --part title
+  python3 report.py --part body --status failed --note "작업 상태 failure: <run URL>"
+  python3 report.py                # 제목과 본문을 함께 출력
 """
 import argparse
 import datetime as dt
 import glob
 import os
 import re
-import smtplib
-import ssl
 import subprocess
 import sys
-from email.message import EmailMessage
 
 REPO_URL_DEFAULT = "https://github.com/Gooreum/claude-daily-lab"
-
-
-def load_env_file(path=os.path.expanduser("~/.config/daily-lab/mail.env")):
-    if not os.path.isfile(path):
-        return
-    for line in open(path, encoding="utf-8"):
-        line = line.strip()
-        if not line or line.startswith("#") or "=" not in line:
-            continue
-        k, v = line.split("=", 1)
-        os.environ.setdefault(k.strip(), v.strip().strip("'\""))
 
 
 def sh(*args):
@@ -117,38 +95,21 @@ def build(root, date, status, note):
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description="daily-lab 요약 메일")
+    ap = argparse.ArgumentParser(description="daily-lab 요약")
     ap.add_argument("--date", default=dt.datetime.now(dt.timezone(dt.timedelta(hours=9))).strftime("%Y-%m-%d"))
     ap.add_argument("--root", default=sh("git", "rev-parse", "--show-toplevel") or ".")
     ap.add_argument("--status", choices=["ok", "failed", "skipped"], default="ok")
     ap.add_argument("--note", default="")
-    ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--part", choices=["title", "body", "all"], default="all")
     a = ap.parse_args(argv)
 
     subject, body = build(a.root, a.date, a.status, a.note)
-    if a.dry_run:
-        print(f"Subject: {subject}\n\n{body}")
-        return 0
-
-    load_env_file()
-    user, pw = os.environ.get("DAILY_LAB_SMTP_USER"), os.environ.get("DAILY_LAB_SMTP_PASS")
-    if not user or not pw:
-        print("메일 건너뜀: DAILY_LAB_SMTP_USER/PASS 설정 없음")
-        return 0
-    to = os.environ.get("DAILY_LAB_MAIL_TO") or user
-    msg = EmailMessage()
-    msg["Subject"], msg["From"], msg["To"] = subject, user, to
-    msg.set_content(body)
-    host = os.environ.get("DAILY_LAB_SMTP_HOST", "smtp.gmail.com")
-    port = int(os.environ.get("DAILY_LAB_SMTP_PORT", "465"))
-    try:
-        with smtplib.SMTP_SSL(host, port, context=ssl.create_default_context(), timeout=30) as s:
-            s.login(user, pw)
-            s.send_message(msg)
-    except Exception as e:
-        print(f"메일 전송 실패: {type(e).__name__}: {e}", file=sys.stderr)
-        return 1
-    print(f"메일 보냄: {subject}")
+    if a.part == "title":
+        print(subject)
+    elif a.part == "body":
+        print(body, end="")
+    else:
+        print(f"{subject}\n\n{body}", end="")
     return 0
 
 
