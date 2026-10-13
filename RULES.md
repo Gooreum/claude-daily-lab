@@ -88,3 +88,4 @@
   5. 커밋할 파일에 API 키·토큰·개인키 패턴(`sk-ant-`, `AKIA`, `ghp_`, `BEGIN .* PRIVATE KEY`)이 없다.
 - 커밋 메시지: `day: YYYY-MM-DD <slug>`
 - `main`에 바로 푸시한다. 거부되면 `git pull --rebase` 후 **한 번만** 재시도한다.
+- 푸시 뒤 `.claude/skills/daily-lab/send_report.py`로 오늘 결과 요약 메일을 보낸다(실패·미완인 날도 보낸다. 0절로 조기 종료한 날은 보내지 않는다). 메일 설정은 환경변수·저장소 밖 파일로만 두고 커밋하지 않는다.

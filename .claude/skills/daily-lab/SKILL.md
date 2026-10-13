@@ -91,10 +91,12 @@ effort: high
    ```
    메시지에 `Co-Authored-By`를 넣지 않는다.
 4. **`main`에 바로 푸시**: `git push origin main`. 거부되면 `git pull --rebase origin main` 후 **한 번만** 재시도. 클라우드 세션·Routine은 기본으로 `claude/` 브랜치를 만들려 하지만, 이 저장소는 **main 직접 푸시**가 규칙이다. 브랜치를 새로 만들지 않는다.
-5. 마지막 답변은 세 줄: 만든 것(폴더·한 줄 설명) / 테스트 결과(통과 수, 실패면 무엇) / 커밋 해시와 푸시 여부. 실패 시 원인 한 줄.
+5. **요약 메일**: 푸시가 끝나면(실패·⚠ 미완이어도) `python3 .claude/skills/daily-lab/send_report.py`를 한 번 실행한다. 루틴이 중간에 막혀 푸시를 못 했으면 `--status failed --note "<원인 한 줄>"`을 붙인다. 메일 설정(`DAILY_LAB_SMTP_USER`/`PASS`)이 없으면 "메일 건너뜀"만 찍고 끝나니 그대로 진행한다. 0절에서 조기 종료한 날은 보내지 않는다. GitHub Actions에서는 워크플로의 별도 단계가 보내므로 이 단계는 설정이 없어 자동으로 건너뛴다.
+6. 마지막 답변은 세 줄: 만든 것(폴더·한 줄 설명) / 테스트 결과(통과 수, 실패면 무엇) / 커밋 해시와 푸시 여부. 실패 시 원인 한 줄.
 
 ## 환경별 메모
 
 - **로컬 터미널**: `claude` 안에서 `/daily-lab`. 권한 프롬프트가 뜨면 승인한다.
 - **클라우드 세션·Routine**: 권한 프롬프트가 없다. 네트워크는 환경의 허용 목록을 따르므로 소식 출처(dev.to, news.hada.io, producthunt.com, latent.space, simonwillison.net 등)가 막히면 소스 점검 표에 `읽기 불가(403 host_not_allowed)`로 적고 계속 간다. 환경 네트워크를 **Full**로 두면 전부 읽힌다.
-- **GitHub Actions**: `.github/workflows/daily-lab.yml`이 매일 21:45 UTC(06:45 KST)에 `/daily-lab`을 부른다. 러너에는 `claude` CLI가 없을 수 있으니 e2e는 건너뛰고 README 5절에 "CI에서는 e2e 미실행"이라고 적는다.
+- **메일 설정**: 로컬은 `~/.config/daily-lab/mail.env`(저장소 밖)에 `DAILY_LAB_SMTP_USER=`·`DAILY_LAB_SMTP_PASS=`(Gmail 앱 비밀번호)·`DAILY_LAB_MAIL_TO=`. 클라우드 Routine은 환경 변수에 같은 이름으로. 공개 저장소이므로 주소·비밀번호를 커밋하지 않는다.
+- **GitHub Actions**: `.github/workflows/daily-lab.yml`이 매일 21:45 UTC(06:45 KST)에 `/daily-lab`을 부른다. 끝나면 성공·실패와 상관없이 별도 단계가 시크릿으로 요약 메일을 보낸다. 러너에는 `claude` CLI가 없을 수 있으니 e2e는 건너뛰고 README 5절에 "CI에서는 e2e 미실행"이라고 적는다.
