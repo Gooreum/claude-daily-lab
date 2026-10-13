@@ -24,6 +24,8 @@
 
 수집만 하려면 `/daily-lab --no-build`, 오늘 폴더가 있어도 다시 돌리려면 `/daily-lab --force`.
 
+결과가 올라오면 **보고 메일**이 온다. 로컬·Routine은 스킬 마지막 단계(`.claude/skills/daily-lab/send_report.py`)가, GitHub Actions 예약 실행은 `daily-lab.yml`의 "요약 메일" 단계가 성공·실패와 상관없이 보내고, 클라우드 세션이 main 대신 PR을 열면 `daily-report.yml`이 같은 스크립트로 보낸다. 설정은 시크릿 `DAILY_LAB_SMTP_USER`(보내는 Gmail)·`DAILY_LAB_SMTP_PASS`(앱 비밀번호)·`DAILY_LAB_MAIL_TO`(받는 주소), 로컬은 `~/.config/daily-lab/mail.env`. 없으면 조용히 건너뛴다.
+
 ## 폴더 구조
 
 ```
@@ -35,7 +37,9 @@ claude-daily-lab/
 ├── news/                     # 날짜별 소식 수집 결과 (YYYY-MM-DD.md)
 ├── days/                     # 날짜별 프로젝트 (YYYY-MM-DD-<slug>/)
 ├── .github/workflows/ci.yml  # 변경된 프로젝트 폴더의 test.sh 실행
-└── .github/workflows/daily-lab.yml  # 06:45 KST에 /daily-lab 실행 (시크릿 있을 때)
+├── .github/workflows/daily-lab.yml  # 06:45 KST에 /daily-lab 실행 (시크릿 있을 때)
+├── .github/workflows/daily-report.yml  # PR이 열리면 보고 메일 (DAILY_LAB_* 시크릿 있을 때)
+└── .claude/skills/daily-lab/send_report.py  # 요약 메일 본문 생성·발송 (로컬/Routine/Actions 공용)
 ```
 
 ## 모노레포 운영 원칙
