@@ -1,0 +1,9 @@
+{
+  "_note": "USD per million tokens. 키는 모델 ID의 접두사(가장 긴 것이 이긴다). cache_write_* 는 5분/1시간 TTL 쓰기. 값은 공개 가격 보도·릴리스 노트를 옮긴 추정치이니 청구 단가와 다르면 고쳐 쓴다.",
+  "models": {
+    "claude-haiku-5-5":  {"input": 0.10, "output": 0.50, "cache_read": 0.01, "cache_write_5m": 0.125, "cache_write_1h": 0.20},
+    "claude-sonnet-5-5": {"input": 2.00, "output": 10.00, "cache_read": 0.10, "cache_write_5m": 2.50, "cache_write_1h": 4.00},
+    "claude-opus-5-5":   {"input": 4.00, "output": 20.00, "cache_read": 0.40, "cache_write_5m": 5.00, "cache_write_1h": 8.00}
+  },
+  "fallback": {"input": 4.00, "output": 20.00, "cache_read": 0.40, "cache_write_5m": 5.00, "cache_write_1h": 8.00}
+}
