@@ -59,13 +59,13 @@ def build(root, date, status, note):
         what = section(md, 1).split("\n\n")[0]
         subject_bits.append(f"{'⚠ 미완 ' if incomplete else ''}{slug}")
         lines += [
-            f"■ 만든 것: {slug} ({kind})",
+            f"■ 만든 것: [{slug}]({repo}/tree/main/days/{date}-{slug}) ({kind})",
             f"  {oneliner}" if oneliner else "",
             "",
             what,
             "",
-            "■ 테스트: " + (tally[0].strip("` ") if tally else "README 5절 참고"),
-            f"■ 폴더: {repo}/tree/main/days/{date}-{slug}",
+            "■ 테스트: " + (tally[0].strip("` ") if tally else "README 5절 참고")
+            + f" ([README]({repo}/blob/main/days/{date}-{slug}/README.md))",
         ]
     else:
         subject_bits.append("결과물 없음")
@@ -74,24 +74,30 @@ def build(root, date, status, note):
     if news:
         items = re.findall(r"^## \d+\. (.+)$", news, re.M)
         pick = re.search(r"^## 오늘의 선정\s*$(.*?)(?=^## |\Z)", news, re.S | re.M)
-        lines += ["", f"■ 소식 {len(items)}건 ({repo}/blob/main/news/{date}.md)"]
+        lines += ["", f"■ 소식 {len(items)}건 ([news/{date}.md]({repo}/blob/main/news/{date}.md))"]
         lines += [f"  - {t}" for t in items[:12]]
         if pick:
             lines += ["", "■ 오늘의 선정", "  " + pick.group(1).strip()]
     else:
         lines += ["", "■ 오늘 news 파일 없음"]
 
-    head = sh("git", "-C", root, "log", "-1", "--format=%h %s")
+    head = sh("git", "-C", root, "log", "-1", "--format=%H %s")
     pushed = sh("git", "-C", root, "status", "-sb").splitlines()[:1]
-    lines += ["", f"■ 마지막 커밋: {head or '?'}"]
+    if head:
+        sha, msg = (head.split(" ", 1) + [""])[:2]
+        lines += ["", f"■ 마지막 커밋: [{sha[:7]}]({repo}/commit/{sha}) {msg}"]
+    else:
+        lines += ["", "■ 마지막 커밋: ?"]
     if pushed:
         lines.append(f"  브랜치 상태: {pushed[0]}" + (" (푸시 안 됨)" if "ahead" in pushed[0] else ""))
     if note:
         lines += ["", f"■ 메모: {note}"]
+    lines += ["", f"■ 저장소: [{repo.split('github.com/')[-1]}]({repo}) · [결과물 목록]({repo}#결과물-목록)"]
 
     tag = {"ok": "", "failed": "❌ 실패 · ", "skipped": "건너뜀 · "}[status]
     subject = f"[daily-lab] {date} {tag}{' / '.join(subject_bits)}"
-    return subject, "\n".join(l for l in lines if l is not None).strip() + "\n"
+    body = "\n".join((l + "  ") if l and not l.lstrip().startswith("- ") else l for l in lines if l is not None)
+    return subject, body.strip() + "\n"
 
 
 def main(argv=None):
