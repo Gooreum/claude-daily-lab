@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
-"""report.py — /daily-lab이 끝난 뒤 오늘 결과 요약(제목·본문)을 만든다 (표준 라이브러리만).
+"""report.py — /daily-lab이 끝난 뒤 "한눈에 보는" 요약 알림(제목·본문)을 만든다 (표준 라이브러리만).
+
+재료는 그날 폴더의 SUMMARY.md(스킬이 4·5단계에서 쓴다). 형식:
+  - 한 줄: <무엇을 만들었나, 쉬운 말 한 문장>
+  - 왜: <계기 한 문장>
+  - 쓰는 법: <한 문장>
+  - 결과: <✅/⚠/❌로 시작하는 한 문장>
+SUMMARY.md가 없으면 루트 README 표의 한 줄 설명으로 대신한다.
 
 GitHub Actions의 "요약 알림" 단계가 이 출력으로 이슈를 올리고 @멘션한다 → GitHub 알림 메일로 도착한다.
   python3 report.py --part title
-  python3 report.py --part body --status failed --note "작업 상태 failure: <run URL>"
-  python3 report.py                # 제목과 본문을 함께 출력
+  python3 report.py --part body --status failed --run-url <URL>
 """
 import argparse
 import datetime as dt
@@ -15,13 +21,7 @@ import subprocess
 import sys
 
 REPO_URL_DEFAULT = "https://github.com/Gooreum/claude-daily-lab"
-
-
-def sh(*args):
-    try:
-        return subprocess.run(args, capture_output=True, text=True, timeout=20).stdout.strip()
-    except Exception:
-        return ""
+FIELDS = {"한 줄": "line", "왜": "why", "쓰는 법": "how", "결과": "result"}
 
 
 def read(path):
@@ -32,91 +32,70 @@ def read(path):
         return ""
 
 
-def section(md, n):
-    m = re.search(rf"^## {n}\..*?$(.*?)(?=^## \d+\.|\Z)", md, re.S | re.M)
-    return m.group(1).strip() if m else ""
+def summary_fields(folder):
+    out = {}
+    for m in re.finditer(r"^\s*-\s*(한 줄|왜|쓰는 법|결과)\s*:\s*(.+)$", read(os.path.join(folder, "SUMMARY.md")), re.M):
+        out[FIELDS[m.group(1)]] = m.group(2).strip()
+    return out
 
 
-def build(root, date, status, note):
-    days = sorted(glob.glob(os.path.join(root, "days", f"{date}-*")))
-    news_path = os.path.join(root, "news", f"{date}.md")
-    news = read(news_path)
+def fallback_line(root, date, slug):
+    row = next((ln for ln in read(os.path.join(root, "README.md")).splitlines()
+                if f"days/{date}-{slug}/" in ln), "")
+    cols = [c.strip() for c in row.strip("|").split("|")]
+    text = cols[4] if len(cols) > 4 else slug
+    text = re.split(r"[(.。]", text)[0].strip()  # 괄호·마침표 앞까지만
+    return text[:60]
+
+
+def build(root, date, status, run_url):
     repo = os.environ.get("DAILY_LAB_REPO_URL", REPO_URL_DEFAULT)
-    lines, subject_bits = [], []
+    md = dt.date.fromisoformat(date)
+    tag = f"[Daily Lab {md.month}/{md.day}]"
+    days = sorted(glob.glob(os.path.join(root, "days", f"{date}-*")))
+    run = f"[실행 기록]({run_url})" if run_url else ""
 
-    if days:
-        d = days[0]
-        slug = os.path.basename(d)[len(date) + 1:]
-        readme_root = read(os.path.join(root, "README.md"))
-        row = next((ln for ln in readme_root.splitlines() if f"days/{date}-{slug}/" in ln), "")
-        cols = [c.strip() for c in row.strip("|").split("|")] if row else []
-        kind = cols[2] if len(cols) > 2 else "?"
-        oneliner = cols[4] if len(cols) > 4 else ""
-        incomplete = oneliner.startswith("⚠")
-        md = read(os.path.join(d, "README.md"))
-        tests = section(md, 5)
-        # 집계 줄("통과 20 · 실패 0", "27 passed", "Ran 27 tests … OK")을 우선하고, 없으면 문장 속 "통과"는 쓰지 않는다
-        tally = re.findall(r"^.*(?:통과[ \t]*\d+|\d+[ \t]*(?:passed|통과)|Ran \d+ tests?).*$", tests, re.M)
-        what = section(md, 1).split("\n\n")[0]
-        subject_bits.append(f"{'⚠ 미완 ' if incomplete else ''}{slug}")
-        lines += [
-            f"■ 만든 것: [{slug}]({repo}/tree/main/days/{date}-{slug}) ({kind})",
-            f"  {oneliner}" if oneliner else "",
-            "",
-            what,
-            "",
-            "■ 테스트: " + (tally[0].strip("` ") if tally else "README 5절 참고")
-            + f" ([README]({repo}/blob/main/days/{date}-{slug}/README.md))",
-        ]
-    else:
-        subject_bits.append("결과물 없음")
-        lines.append("■ 오늘 날짜의 days/ 폴더가 없다. 루틴이 중간에 멈췄거나 --no-build로 돌았다.")
+    if not days:
+        title = f"{tag} ❌ 오늘은 못 만들었어요"
+        body = ["### 오늘은 결과물이 없어요",
+                "루틴이 중간에 멈췄습니다." + (f" 원인은 {run}에서 볼 수 있어요." if run else "")]
+        return title, "\n\n".join(body) + "\n"
 
-    if news:
-        items = re.findall(r"^## \d+\. (.+)$", news, re.M)
-        pick = re.search(r"^## 오늘의 선정\s*$(.*?)(?=^## |\Z)", news, re.S | re.M)
-        lines += ["", f"■ 소식 {len(items)}건 ([news/{date}.md]({repo}/blob/main/news/{date}.md))"]
-        lines += [f"  - {t}" for t in items[:12]]
-        if pick:
-            lines += ["", "■ 오늘의 선정", "  " + pick.group(1).strip()]
-    else:
-        lines += ["", "■ 오늘 news 파일 없음"]
+    folder = days[0]
+    slug = os.path.basename(folder)[len(date) + 1:]
+    f = summary_fields(folder)
+    line = f.get("line") or fallback_line(root, date, slug)
+    result = f.get("result", "")
+    warn = "❌ " if status == "failed" else ("⚠ " if result.startswith(("⚠", "❌")) else "")
+    title = f"{tag} {warn}{line}"
 
-    head = sh("git", "-C", root, "log", "-1", "--format=%H %s")
-    pushed = sh("git", "-C", root, "status", "-sb").splitlines()[:1]
-    if head:
-        sha, msg = (head.split(" ", 1) + [""])[:2]
-        lines += ["", f"■ 마지막 커밋: [{sha[:7]}]({repo}/commit/{sha}) {msg}"]
-    else:
-        lines += ["", "■ 마지막 커밋: ?"]
-    if pushed:
-        lines.append(f"  브랜치 상태: {pushed[0]}" + (" (푸시 안 됨)" if "ahead" in pushed[0] else ""))
-    if note:
-        lines += ["", f"■ 메모: {note}"]
-    lines += ["", f"■ 저장소: [{repo.split('github.com/')[-1]}]({repo}) · [결과물 목록]({repo}#결과물-목록)"]
-
-    tag = {"ok": "", "failed": "❌ 실패 · ", "skipped": "건너뜀 · "}[status]
-    subject = f"[daily-lab] {date} {tag}{' / '.join(subject_bits)}"
-    body = "\n".join((l + "  ") if l and not l.lstrip().startswith("- ") else l for l in lines if l is not None)
-    return subject, body.strip() + "\n"
+    body = ["### 오늘 만든 것", f"**{line}**", ""]
+    for key, label in (("why", "왜"), ("how", "쓰는 법"), ("result", "결과")):
+        if f.get(key):
+            body.append(f"- **{label}:** {f[key]}")
+    if status == "failed":
+        body.append(f"- **주의:** 루틴이 끝까지 가지 못했습니다. {run}".rstrip())
+    body += ["", f"[자세히 보기 →]({repo}/tree/main/days/{date}-{slug})"]
+    return title, "\n".join(body).strip() + "\n"
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description="daily-lab 요약")
+    ap = argparse.ArgumentParser(description="daily-lab 한눈 요약")
     ap.add_argument("--date", default=dt.datetime.now(dt.timezone(dt.timedelta(hours=9))).strftime("%Y-%m-%d"))
-    ap.add_argument("--root", default=sh("git", "rev-parse", "--show-toplevel") or ".")
-    ap.add_argument("--status", choices=["ok", "failed", "skipped"], default="ok")
-    ap.add_argument("--note", default="")
+    ap.add_argument("--root", default=subprocess.run(["git", "rev-parse", "--show-toplevel"],
+                                                     capture_output=True, text=True).stdout.strip() or ".")
+    ap.add_argument("--status", choices=["ok", "failed"], default="ok")
+    ap.add_argument("--run-url", default="")
     ap.add_argument("--part", choices=["title", "body", "all"], default="all")
     a = ap.parse_args(argv)
 
-    subject, body = build(a.root, a.date, a.status, a.note)
+    title, body = build(a.root, a.date, a.status, a.run_url)
     if a.part == "title":
-        print(subject)
+        print(title)
     elif a.part == "body":
         print(body, end="")
     else:
-        print(f"{subject}\n\n{body}", end="")
+        print(f"{title}\n\n{body}", end="")
     return 0
 
 

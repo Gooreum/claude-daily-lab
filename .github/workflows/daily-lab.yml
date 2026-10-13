@@ -85,8 +85,8 @@ jobs:
           git pull --ff-only origin main || true
           if [ "$JOB_STATUS" = "success" ]; then status=ok; else status=failed; fi
           R=.claude/skills/daily-lab/report.py
-          title=$(python3 $R --part title --status $status)
-          { echo "@$OWNER"; echo; python3 $R --part body --status $status --note "작업 상태 $JOB_STATUS · [실행 기록]($RUN_URL)"; } > "$RUNNER_TEMP/report.md"
+          title=$(python3 $R --part title --status $status --run-url "$RUN_URL")
+          { echo "@$OWNER"; echo; python3 $R --part body --status $status --run-url "$RUN_URL"; } > "$RUNNER_TEMP/report.md"
           url=$(gh issue create --title "$title" --body-file "$RUNNER_TEMP/report.md")
           gh issue close "$url" --reason completed >/dev/null
           echo "알림 이슈: $url"
