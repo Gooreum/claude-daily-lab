@@ -1,0 +1,30 @@
+{
+ "check_runs": [
+  {
+   "id": 1,
+   "name": "build",
+   "status": "completed",
+   "conclusion": "neutral",
+   "completed_at": "2026-10-15T10:00:00Z",
+   "started_at": "2026-10-15T10:00:00Z",
+   "output": {
+    "title": "Code review: 3 findings",
+    "summary": "s",
+    "text": null
+   }
+  },
+  {
+   "id": 2,
+   "name": "Claude Code Review",
+   "status": "completed",
+   "conclusion": "neutral",
+   "completed_at": "2026-10-15T10:00:00Z",
+   "started_at": "2026-10-15T10:00:00Z",
+   "output": {
+    "title": "Code review: 3 findings",
+    "summary": "s",
+    "text": "| Severity | File:Line | Issue |\n| - | - | - |\n| 🔴 Important | `a.py:1` | x |\n\n<!-- bughunter-severity: {\"nit\": 1, \"normal\": 2, \"pre_existing\": 0} -->"
+   }
+  }
+ ]
+}

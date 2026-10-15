@@ -1,0 +1,17 @@
+{
+ "check_runs": [
+  {
+   "id": 5,
+   "name": "Claude Code Review",
+   "status": "completed",
+   "conclusion": "neutral",
+   "completed_at": "2026-10-15T10:00:00Z",
+   "started_at": "2026-10-15T10:00:00Z",
+   "output": {
+    "title": "Code review: 3 findings",
+    "summary": "s",
+    "text": "timed out, no machine-readable line"
+   }
+  }
+ ]
+}
