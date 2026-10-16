@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__github",
+      "mcp__db",
+      "mcp__a__b__whoami",
+      "Read"
+    ],
+    "deny": [
+      "mcp__a__b",
+      "mcp__db_admin__drop_table"
+    ],
+    "ask": [
+      "mcp__github"
+    ]
+  }
+}

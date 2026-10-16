@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "github": {"command": "gh-mcp"},
+    "github__enterprise": {"command": "gh-mcp-ent"},
+    "db": {"command": "db-mcp"},
+    "db_admin": {"command": "db-admin-mcp"},
+    "a": {"command": "a"},
+    "a__b": {"command": "ab"}
+  }
+}

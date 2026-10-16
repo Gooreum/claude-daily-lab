@@ -1,0 +1,6 @@
+{
+  "permissions": {
+    "allow": ["mcp__github__*", "mcp__db__*", "mcp__db__query", "Read"],
+    "deny": ["mcp__db-admin__*"]
+  }
+}

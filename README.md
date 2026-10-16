@@ -57,6 +57,7 @@ claude-daily-lab/
 <!-- 최신 항목이 위로 오도록 이 줄 아래에 행을 추가 -->
 | 날짜 | 이름 | 종류 | 계기가 된 소식 | 한 줄 설명 |
 |------|------|------|----------------|------------|
+| 2026-10-17 | [mcp-rule-audit](days/2026-10-17-mcp-rule-audit/) | CLI 스크립트 | [dev.to 10-16: 허용 규칙 `mcp__a`가 서버 `a__b`까지 덮던 문제 (Claude Code 2.1.299)](https://dev.to/gabrielanhaia/an-allow-rule-for-mcp-server-a-also-matched-ab-how-claude-codes-names-collided-2cm8) | 설정 JSON·`.mcp.json`·서브에이전트·워크플로의 MCP 권한 규칙 중 2.1.299에서 뜻이 바뀐 것(이름 겹침·`__` 모호성)을 찾아 `mcp__서버__*` 형태로 고쳐 쓰라고 제안. 자체 테스트 27개 |
 | 2026-10-16 | [review-gate](days/2026-10-16-review-gate/) | CLI 스크립트 | [Code Review 정식 출시 (10-15)](https://claude.com/resources/articles/code-review-is-now-generally-available) | Claude Code Review 체크런의 Important 개수로 병합을 막고, 개수 줄이 없는 리뷰는 "0개"가 아닌 판정 없음으로 처리하며 REVIEW.md가 베이스 브랜치에 병합됐는지 점검한다(가짜 gh로 검증, 실제 체크런은 미확인). |
 | 2026-10-15 | [otel-tap](days/2026-10-15-otel-tap/) | CLI 스크립트 | [Claude Platform OpenTelemetry 내보내기 베타 (10-14)](https://claude.com/resources/articles/agent-observability-on-the-claude-platform) | Claude Code의 OpenTelemetry 로그·지표를 로컬에서 받아 비용·토큰·캐시 적중률·도구 실패로 요약한다(실제 2.1.300 수신 확인, 모델 호출 이벤트는 로그인 없어 미확인). |
 | 2026-10-14 | [session-bulkhead](days/2026-10-14-session-bulkhead/) | Claude Code 훅 | [GeekNews 10-13: claude-bulkhead — 병렬 Claude Code 세션의 프로세스·포트·메모리 충돌 방지](https://news.hada.io/topic?id=35290) | 한 기기의 병렬 세션이 서로를 망치지 못하게 세션 장부로 대조해 막는 PreToolUse 훅: 이름 기반 `pkill`·남의 포트·동시 빌드/메모리 부족·같은 작업 트리의 `git checkout` 차단(이유는 stderr, 대안 안내). 단위 43건·두 세션 재현(demo.sh). ⚠ 실제 Claude Code e2e는 로그인 없는 CI라 미실행 |
