@@ -68,7 +68,16 @@ def fallback_line(root, date, slug):
     return text[:60]
 
 
-def build(root, date, status, run_url):
+def apply_block(count, url):
+    """apply 잡이 비공개 inbox에 올린 적용안 링크. 잡이 안 돌았으면(url 없음) 아무것도 쓰지 않는다."""
+    if not url:
+        return []
+    n = int(count) if str(count).isdigit() else 0
+    text = f"적용안 {n}건 → [비공개 inbox에서 보기]({url})" if n else f"오늘은 적용할 곳이 없었습니다. [검토 기록]({url})"
+    return ["", "### 🔧 내 프로젝트 적용", text]
+
+
+def build(root, date, status, run_url, apply_count="", apply_url=""):
     repo = os.environ.get("DAILY_LAB_REPO_URL", REPO_URL_DEFAULT)
     md = dt.date.fromisoformat(date)
     tag = f"[Daily Lab {md.month}/{md.day}]"
@@ -81,7 +90,7 @@ def build(root, date, status, run_url):
         title = f"{tag} 소식 {n_news}건 수집 · ❌ 개발 못 함"
         body = news + ["", "### 🛠 개발한 것",
                        "오늘은 결과물이 없습니다. 루틴이 중간에 멈췄습니다." + (f" 원인은 {run}에서 볼 수 있어요." if run else "")]
-        return title, "\n".join(body).strip() + "\n"
+        return title, "\n".join(body + apply_block(apply_count, apply_url)).strip() + "\n"
 
     folder = days[0]
     slug = os.path.basename(folder)[len(date) + 1:]
@@ -98,7 +107,7 @@ def build(root, date, status, run_url):
     if status == "failed":
         dev.append(f"- **주의:** 루틴이 끝까지 가지 못했습니다. {run}".rstrip())
     dev += ["", f"[자세히 보기 →]({repo}/tree/main/days/{date}-{slug})"]
-    return title, "\n".join(news + [""] + dev).strip() + "\n"
+    return title, "\n".join(news + [""] + dev + apply_block(apply_count, apply_url)).strip() + "\n"
 
 
 def main(argv=None):
@@ -108,10 +117,12 @@ def main(argv=None):
                                                      capture_output=True, text=True).stdout.strip() or ".")
     ap.add_argument("--status", choices=["ok", "failed"], default="ok")
     ap.add_argument("--run-url", default="")
+    ap.add_argument("--apply-count", default="")
+    ap.add_argument("--apply-url", default="")
     ap.add_argument("--part", choices=["title", "body", "all"], default="all")
     a = ap.parse_args(argv)
 
-    title, body = build(a.root, a.date, a.status, a.run_url)
+    title, body = build(a.root, a.date, a.status, a.run_url, a.apply_count, a.apply_url)
     if a.part == "title":
         print(title)
     elif a.part == "body":

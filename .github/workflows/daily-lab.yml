@@ -2,6 +2,10 @@
 # 준비물(한 번만): 로컬에서 `claude setup-token` → 저장소 시크릿 CLAUDE_CODE_OAUTH_TOKEN 에 저장 (gh secret set CLAUDE_CODE_OAUTH_TOKEN)
 # 푸시는 워크플로의 GITHUB_TOKEN으로 한다(Claude GitHub App 설치 불필요). 이 토큰의 푸시는 ci.yml을 다시 트리거하지 않지만, 스킬이 test.sh를 직접 돌린다.
 # 시크릿이 없으면 아무것도 하지 않고 성공으로 끝난다(실패 알림이 매일 오지 않게).
+# 내 프로젝트 적용(apply 잡): /daily-lab 다음에 최근 활동한 내 저장소(비공개 포함) 스냅샷과 오늘 소식을 대조한다.
+#   시크릿 REPO_READ_TOKEN(fine-grained, All repositories, Contents·Metadata 읽기)과 INBOX_TOKEN(daily-lab-inbox 저장소만, Contents 쓰기)이 있어야 돈다.
+#   스냅샷은 워크플로가 받고, Claude는 Read/Write/Glob/Grep만 쓴다(셸·웹·토큰 없음). 전체 적용안은 비공개 daily-lab-inbox로,
+#   공개 저장소 적용안만 news 파일 끝에 붙인다(비공개 저장소 이름이 섞이면 버린다).
 # 요약 알림: 끝나면 봇이 요약 이슈를 올려 저장소 주인을 @멘션하고 바로 닫는다 → GitHub 알림 메일로 도착한다(받는 주소는 GitHub 알림 설정).
 name: Daily Lab
 
@@ -23,6 +27,8 @@ jobs:
   run:
     runs-on: ubuntu-latest
     timeout-minutes: 90
+    outputs:
+      ready: ${{ steps.gate.outputs.ready }}
     permissions:
       contents: write
       issues: write
@@ -74,19 +80,115 @@ jobs:
             --permission-mode acceptEdits
             --allowedTools "Bash,Read,Write,Edit,Glob,Grep,WebFetch,WebSearch"
 
+  apply:
+    needs: run
+    if: always() && needs.run.outputs.ready == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      id-token: write
+    outputs:
+      count: ${{ steps.deliver.outputs.count }}
+      url: ${{ steps.deliver.outputs.url }}
+    steps:
+      - name: 시크릿 확인
+        id: gate
+        env:
+          HAS_TOKENS: ${{ secrets.REPO_READ_TOKEN != '' && secrets.INBOX_TOKEN != '' }}
+        run: |
+          if [ "$HAS_TOKENS" != "true" ]; then
+            echo "REPO_READ_TOKEN·INBOX_TOKEN 시크릿이 없어 내 프로젝트 적용을 건너뜁니다."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.gate.outputs.ready == 'true'
+        with:
+          ref: main
+          persist-credentials: false
+
+      - name: 활성 저장소 스냅샷
+        if: steps.gate.outputs.ready == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.REPO_READ_TOKEN }}
+        run: python3 .claude/skills/daily-lab-apply/collect_repos.py --out .apply/repos
+
+      - name: /daily-lab-apply
+        if: steps.gate.outputs.ready == 'true'
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          prompt: "/daily-lab-apply"
+          claude_args: |
+            --max-turns 60
+            --permission-mode acceptEdits
+            --allowedTools "Read,Write,Glob,Grep"
+            --disallowedTools "Bash,Edit,WebFetch,WebSearch"
+
+      - name: 비공개 inbox로 보내고 공개분만 news에 붙이기
+        id: deliver
+        if: steps.gate.outputs.ready == 'true'
+        env:
+          INBOX_TOKEN: ${{ secrets.INBOX_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OWNER: ${{ github.repository_owner }}
+          REPO: ${{ github.repository }}
+        run: |
+          date=$(TZ=Asia/Seoul date +%F)
+          out=.apply/out
+          if [ ! -s "$out/private.md" ]; then echo "적용안 파일이 없습니다."; exit 0; fi
+          count=$(grep -oE 'apply-count: [0-9]+' "$out/private.md" | grep -oE '[0-9]+' | tail -1)
+          echo "count=${count:-0}" >> "$GITHUB_OUTPUT"
+
+          git config --global user.name "claude-daily-lab"
+          git config --global user.email "claude-daily-lab@users.noreply.github.com"
+          git clone -q "https://x-access-token:${INBOX_TOKEN}@github.com/${OWNER}/daily-lab-inbox.git" "$RUNNER_TEMP/inbox"
+          mkdir -p "$RUNNER_TEMP/inbox/apply"
+          cp "$out/private.md" "$RUNNER_TEMP/inbox/apply/$date.md"
+          git -C "$RUNNER_TEMP/inbox" add "apply/$date.md"
+          git -C "$RUNNER_TEMP/inbox" commit -q -m "apply: $date" && git -C "$RUNNER_TEMP/inbox" push -q
+          echo "url=https://github.com/${OWNER}/daily-lab-inbox/blob/main/apply/$date.md" >> "$GITHUB_OUTPUT"
+
+          pub="$out/public.md"
+          [ -s "$pub" ] || exit 0
+          for name in $(python3 -c 'import json;print(" ".join(r["name"] for r in json.load(open(".apply/repos/index.json")) if r["visibility"]=="private"))'); do
+            if grep -qiF "$name" "$pub"; then echo "공개분에 비공개 저장소 이름($name)이 있어 버립니다."; exit 0; fi
+          done
+          [ -f "news/$date.md" ] || exit 0
+          { echo; cat "$pub"; } >> "news/$date.md"
+          git add "news/$date.md"
+          git commit -q -m "news: $date 내 프로젝트 적용(공개 저장소)"
+          git push -q "https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO}.git" HEAD:main
+
+  notify:
+    needs: [run, apply]
+    if: always() && needs.run.outputs.ready == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
       - name: 요약 알림 (이슈 + @멘션 → GitHub 알림 메일)
-        if: always() && steps.gate.outputs.ready == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          JOB_STATUS: ${{ job.status }}
+          JOB_STATUS: ${{ needs.run.result }}
+          APPLY_COUNT: ${{ needs.apply.outputs.count }}
+          APPLY_URL: ${{ needs.apply.outputs.url }}
           OWNER: ${{ github.repository_owner }}
         run: |
-          git pull --ff-only origin main || true
           if [ "$JOB_STATUS" = "success" ]; then status=ok; else status=failed; fi
           R=.claude/skills/daily-lab/report.py
           title=$(python3 $R --part title --status $status --run-url "$RUN_URL")
-          { echo "@$OWNER"; echo; python3 $R --part body --status $status --run-url "$RUN_URL"; } > "$RUNNER_TEMP/report.md"
+          { echo "@$OWNER"; echo; python3 $R --part body --status $status --run-url "$RUN_URL" --apply-count "$APPLY_COUNT" --apply-url "$APPLY_URL"; } > "$RUNNER_TEMP/report.md"
           url=$(gh issue create --title "$title" --body-file "$RUNNER_TEMP/report.md")
           gh issue close "$url" --reason completed >/dev/null
           echo "알림 이슈: $url"
