@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "notes": { "command": "npx", "args": ["-y", "@acme/notes-mcp"] },
+    "pinned": { "command": "npx", "args": ["-y", "@acme/ok-mcp@1.2.3"] },
+    "py": { "command": "uvx", "args": ["some-tool"] },
+    "local": { "command": "node", "args": ["server.js"] }
+  }
+}
