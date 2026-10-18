@@ -1,0 +1,5 @@
+{"hooks": {"PreToolUse": [
+  {"matcher": "Bash", "hooks": [{"type": "command", "command": "python3 good_exit2.py", "onFailure": "block"}]},
+  {"matcher": "Edit|Write", "hooks": [{"type": "command", "command": "python3 good_exit2.py"}]},
+  {"matcher": "Bash", "hooks": [{"type": "http", "url": "http://localhost:9/hook"}]}
+]}}

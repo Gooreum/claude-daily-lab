@@ -1,0 +1,5 @@
+{"hooks": {"PreToolUse": [
+  {"matcher": "bash", "hooks": [{"type": "command", "command": "python3 good_exit2.py"}]},
+  {"matcher": "Bash", "hooks": [{"type": "command", "command": "python3 bad_exit1.py"}]},
+  {"matcher": "Bash", "hooks": [{"type": "command", "command": "python3 no_such_hook.py"}]}
+]}}
