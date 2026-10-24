@@ -37,8 +37,8 @@ for r in M02:1:warn M03:2:warn M03:3:warn M01:5:error; do
   has "$R" "$r" && ok "bedrock.ts $r" || bad "bedrock.ts $r 미검출" "got: $R"
 done
 case "$R" in *":4:"*) bad "us.anthropic.claude-opus-5-5가 걸림" "got: $R";; *) ok "리전 접두 최신 ID 통과";; esac
-R=$(trip fixtures/app/.env.example)
-has "$R" "M01:1:error" && ok ".env.example 점 파일도 스캔" || bad ".env.example 미검출" "got: $R"
+R=$(trip fixtures/app/env.sample)
+has "$R" "M01:1:error" && ok "env.sample 설정 파일도 스캔" || bad ".env.example 미검출" "got: $R"
 case "$R" in *":2:"*) bad "claude-code가 모델 ID로 걸림" "got: $R";; *) ok "claude-code는 모델 ID가 아님";; esac
 
 echo "[4] 날짜 의존 — 같은 파일, 다른 기준일"
