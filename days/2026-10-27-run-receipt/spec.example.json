@@ -1,0 +1,10 @@
+{
+  "root": ".",
+  "prompt_files": ["nightly-prompt.md"],
+  "blocked": "BLOCKED.md",
+  "outputs": [
+    {"path": "out/{date}-report.csv", "max_age_hours": 24, "min_data_rows": 1},
+    {"path": "out/summary.json", "json": true, "max_age_hours": 24}
+  ],
+  "report": {"path": "REPORT.md", "sections": ["변경", "검증", "가정", "남은"], "max_age_hours": 24}
+}
