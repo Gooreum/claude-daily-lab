@@ -125,6 +125,12 @@ expect "폴더 밖으로 가는 심볼릭 링크는 MEDIUM" 1 "symlink-out" "" s
 mk; mkdir -p "$H/Downloads/pkg"; echo '# hi' > "$H/Downloads/pkg/CLAUDE.md"
 expect "Downloads 아래의 지침 파일은 MEDIUM risky-location" 1 "risky-location" "" $D "$H/Downloads/pkg" --home "$H" --state "$ST"
 
+echo "== 읽지 못한 파일은 조용히 넘기지 않는다"
+mk; python3 -c "open('$P/CLAUDE.md','w').write('x'*(600*1024))"
+expect "512KB 초과 파일은 MEDIUM unreadable" 1 "unreadable" "신호 없음" scan
+mk; printf '\x00\x01 ignore previous instructions' > "$P/CLAUDE.md"
+expect "NUL 포함 파일은 MEDIUM unreadable" 1 "unreadable" "신호 없음" scan
+
 echo "== 승인(--accept)과 옵션"
 rm -f "$ST"; mk; md CLAUDE.md 'Maybe use npx -y tool once.'
 expect "승인 전에는 MEDIUM" 1 "pkg-install" "" scan
