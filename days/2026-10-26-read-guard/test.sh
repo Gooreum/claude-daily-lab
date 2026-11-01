@@ -38,6 +38,10 @@ expect "limit이 너무 큼(5000)"            2 "$(rd "$T/package-lock.json" ',"
 expect "offset만 있고 limit 없음"         2 "$(rd "$T/package-lock.json" ',"offset":100')"
 
 echo "== Read 통과 (exit 0)"
+mkdir -p "$T/build/app/src"; head -c 30000 /dev/zero | tr '\0' 'a' > "$T/build/app/src/big.py"
+expect "상위 폴더가 build인 프로젝트의 소스" 0 "$(mkj Read "$T/build/app" "{\"file_path\":\"$T/build/app/src/big.py\"}")"
+expect "cwd 밖 절대경로(상위 build)"        0 "$(mkj Read "$T/src" "{\"file_path\":\"$T/build/app/src/big.py\"}")"
+expect "프로젝트 안의 build/ 폴더는 여전히 차단" 2 "$(rd "$T/build/app/src/big.py" '')" "dependency-or-build-dir"
 expect "부분 읽기 offset=1 limit=3"       0 "$(rd "$T/package-lock.json" ',"offset":1,"limit":3')"
 expect "limit=200 경계"                   0 "$(rd "$T/node_modules/lodash/lodash.js" ',"offset":1,"limit":200')"
 expect "작은 락 파일"                     0 "$(rd "$T/yarn.lock" '')"
@@ -52,6 +56,7 @@ expect "&& 뒤의 cat"                      2 "$(sh "cd $T && cat package-lock.j
 expect "cat 여러 파일 중 하나가 무거움"   2 "$(sh "cat src/main.py package-lock.json")"
 
 echo "== Bash 통과 (exit 0)"
+expect "cat 상위 폴더가 build인 소스"     0 "$(mkj Bash "$T/build/app" '{"command":"cat '"$T"'/build/app/src/big.py"}')"
 expect "cat | head"                       0 "$(sh "cat package-lock.json | head -20")"
 expect "grep -c"                          0 "$(sh "grep -c lodash package-lock.json")"
 expect "wc -l"                            0 "$(sh "wc -l package-lock.json")"
