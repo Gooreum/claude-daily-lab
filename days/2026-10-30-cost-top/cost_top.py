@@ -131,8 +131,10 @@ def fetch_all(base, endpoint, query_fn, key):
         except urllib.error.HTTPError as e:
             detail = e.read(400).decode("utf-8", "replace").replace(key, "***")
             raise Fail(f"HTTP {e.code} {endpoint}: {detail}")
-        except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as e:
+        except (urllib.error.URLError, TimeoutError, ValueError) as e:
             raise Fail(f"요청 실패 {endpoint}: {type(e).__name__}: {e}")
+        if not isinstance(body, dict):
+            raise Fail(f"요청 실패 {endpoint}: 응답이 JSON 객체가 아니다")
         pages.append(body)
         token = body.get("next_page") if body.get("has_more") else None
         if not token:
@@ -290,8 +292,14 @@ def run(a):
     qf = lambda page: build_query(start, end, a.bucket, group_by, a.order_by, None, a.limit, filters, page)
 
     if a.input:
-        data = json.load(open(a.input, encoding="utf-8"))
+        try:
+            with open(a.input, encoding="utf-8") as f:
+                data = json.load(f)
+        except (OSError, ValueError) as e:
+            raise Fail(f"--input을 읽을 수 없다: {type(e).__name__}: {e}")
         pages = data if isinstance(data, list) else [data]
+        if not all(isinstance(p, dict) for p in pages):
+            raise Fail("--input은 응답 객체 하나 또는 객체 배열이어야 한다")
     elif a.dry_run:
         url = f"{a.base_url.rstrip('/')}/v1/organizations/analytics/{a.endpoint}?{qf(None)}"
         if a.endpoint == "usage":
