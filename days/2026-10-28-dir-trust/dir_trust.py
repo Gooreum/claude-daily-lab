@@ -295,23 +295,27 @@ def run(args):
             hashes[str(p)] = h
             if p.is_symlink() and not str(real).startswith(str(d) + os.sep):
                 sc.add("MEDIUM", "symlink-out", p, 1, f"폴더 밖 파일로 가는 심볼릭 링크 → {real}", "")
-            if accepted.get(str(p)) == h and not args.all:
+            trusted = accepted.get(str(p)) == h and not args.all
+            if trusted:
                 skipped_accepted.append(str(p))
-                continue
-            scanned.append(str(p))
-            scan_text(sc, p, text)
+            else:
+                scanned.append(str(p))
+                scan_text(sc, p, text)
             if kind == "md":
-                scan_frontmatter(sc, p, text)
+                if not trusted:
+                    scan_frontmatter(sc, p, text)
                 if depth.get(p, 0) < 1:
                     for m in RE_INCLUDE.finditer(text):
                         inc = Path(os.path.expanduser(m.group(1)))
                         inc = (p.parent / inc) if not inc.is_absolute() else inc
                         if inc.is_file():
                             depth[inc] = 1
-                            if not str(inc.resolve()).startswith(str(d) + os.sep):
+                            if not trusted and not str(inc.resolve()).startswith(str(d) + os.sep):
                                 ln = text.count("\n", 0, m.start(1)) + 1
                                 sc.add("MEDIUM", "include-outside", p, ln, f"@포함이 폴더 밖 파일을 읽는다 → {inc.resolve()}", m.group(0))
                             queue.append((inc, "md"))
+            elif trusted:
+                pass
             elif kind == "settings":
                 scan_settings(sc, p, text)
             elif kind == "mcp":
