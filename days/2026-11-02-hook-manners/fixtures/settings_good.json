@@ -1,0 +1,5 @@
+{"hooks": {
+  "Stop": [{"hooks": [{"type": "command", "command": "python3 fixtures/good_stop.py", "timeout": 5}]}],
+  "PostToolUse": [{"matcher": "Edit|Write", "hooks": [{"type": "command", "command": "python3 fixtures/good_observer.py", "timeout": 5}]}],
+  "PreToolUse": [{"matcher": "Bash", "hooks": [{"type": "command", "command": "python3 fixtures/crash_hook.py", "timeout": 5}]}]
+}}

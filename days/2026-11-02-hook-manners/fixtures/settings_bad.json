@@ -1,0 +1,7 @@
+{"hooks": {
+  "Stop": [{"hooks": [{"type": "command", "command": "python3 fixtures/loop_stop.py"}]}],
+  "PostToolUse": [{"hooks": [{"type": "command", "command": "python3 fixtures/crash_hook.py", "timeout": 5}]}],
+  "Notification": [{"hooks": [{"type": "command", "command": "python3 fixtures/slow_hook.py", "timeout": 120}]}],
+  "SubagentStop": [{"hooks": [{"type": "command", "command": "sh fixtures/exit2_hook.sh", "timeout": 5}]}],
+  "SessionStart": [{"hooks": [{"type": "http", "url": "http://localhost:1/x"}]}]
+}}
