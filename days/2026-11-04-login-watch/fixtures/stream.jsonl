@@ -1,0 +1,3 @@
+{"type":"system","subtype":"init","session_id":"s1"}
+{"type":"assistant","message":{"content":[{"type":"text","text":"hi"}]}}
+{"type":"result","subtype":"success","is_error":false,"result":"hi","credential_expires_at":1796000000000}
