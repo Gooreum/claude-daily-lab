@@ -1,0 +1,4 @@
+- [사용자 역할](user-role.md) — 백엔드 개발자, Go 10년차
+- [테스트는 실제 DB로](feedback-testing.md) — 목 대신 실제 DB를 쓰라는 지시
+- [릴리스 동결](project-freeze.md) — 2026-11-12부터 병합 동결
+- [버그 대시보드](reference-dashboard.md) — 장애 추적 위치
