@@ -1,0 +1,4 @@
+# 퇴사 처리 대상
+alice@x.test
+Bob@x.test   # 주 소유자
+zed@x.test
