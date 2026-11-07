@@ -35,8 +35,12 @@ CAT_LIKE = {"cat", "less", "more", "bat", "nl"}
 SEPARATORS = {";", "&&", "||", "|", "&"}
 
 
-def classify(path):
-    """무거운 파일이면 이유(kind)를, 아니면 None."""
+def classify(path, cwd=None):
+    """무거운 파일이면 이유(kind)를, 아니면 None.
+
+    폴더 검사는 프로젝트 루트(cwd) 기준 상대경로의 디렉터리 구성요소만 본다.
+    cwd 밖의 경로는 상위 폴더 이름(~/build/app 등)과 구분할 수 없어 폴더 검사를 생략한다.
+    """
     base = os.path.basename(path)
     ext = os.path.splitext(base)[1].lower()
     if base in LOCKFILES:
@@ -45,8 +49,11 @@ def classify(path):
         return "bundle"
     if ext in BINARY_EXT:
         return "binary"
-    parts = set(path.replace("\\", "/").split("/"))
-    if parts & DIRS:
+    root = os.path.normpath(cwd or os.getcwd())
+    rel = os.path.relpath(os.path.normpath(resolve(path, root)), root).replace("\\", "/")
+    if rel == ".." or rel.startswith("../"):
+        return None
+    if set(rel.split("/")[:-1]) & DIRS:
         return "dependency-or-build-dir"
     return None
 
@@ -64,7 +71,7 @@ def file_size(path):
 
 def judge_read(tool_input, cwd):
     path = tool_input.get("file_path") or ""
-    kind = classify(path)
+    kind = classify(path, cwd)
     if not kind:
         return None
     limit = tool_input.get("limit")
@@ -103,7 +110,7 @@ def judge_bash(command, cwd):
         for arg in seg[1:]:
             if arg.startswith("-"):
                 continue
-            kind = classify(arg)
+            kind = classify(arg, cwd)
             size = file_size(resolve(arg, cwd))
             if kind and size is not None and (kind == "binary" or size >= MIN_BYTES):
                 return {"path": arg, "kind": kind, "bytes": size, "via": seg[0]}
