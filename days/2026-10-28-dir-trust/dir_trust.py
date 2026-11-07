@@ -64,15 +64,16 @@ TEXT_RULES = [
 
 
 def read_text(p):
+    """(text, reason) — 읽지 못하면 text가 None이고 reason에 이유가 담긴다."""
     try:
         if p.stat().st_size > MAX_BYTES:
-            return None
+            return None, f"{MAX_BYTES // 1024}KB 초과"
         b = p.read_bytes()
-    except OSError:
-        return None
+    except OSError as e:
+        return None, f"읽기 실패({e.__class__.__name__})"
     if b"\x00" in b[:4096]:
-        return None
-    return b.decode("utf-8", "replace")
+        return None, "NUL 바이트 포함(바이너리로 보임)"
+    return b.decode("utf-8", "replace"), None
 
 
 def snippet(s, n=110):
@@ -287,8 +288,12 @@ def run(args):
                 continue
             seen.add(p)
             real = p.resolve()
-            text = read_text(real) if real.is_file() else None
+            if not real.is_file():
+                continue
+            text, reason = read_text(real)
             if text is None:
+                found_here = True
+                sc.add("MEDIUM", "unreadable", p, 0, f"검사하지 못함: {reason} — 눈으로 확인", "")
                 continue
             found_here = True
             h = sha(real)
