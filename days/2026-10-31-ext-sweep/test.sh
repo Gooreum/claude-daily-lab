@@ -59,6 +59,11 @@ mk; ext .cursor anthropic.claude-code-2.1.311-darwin-arm64 2.1.299
 expect "불일치만이면 MEDIUM ext-version-mismatch" 1 "ext-version-mismatch" "[HIGH" $S --home "$H"
 mk; mkdir -p "$H/.cursor/extensions/anthropic.claude-code-2.1.311/extension"
 expect "package.json이 없으면 MEDIUM" 1 "ext-manifest-missing" "[HIGH" $S --home "$H"
+for body in '[]' '"x"' 'null'; do
+  mk; ext .cursor anthropic.claude-code-2.1.311 2.1.311
+  printf '%s\n' "$body" > "$H/.cursor/extensions/anthropic.claude-code-2.1.311/extension/package.json"
+  expect "package.json 최상위가 ${body} 이면 크래시 없이 MEDIUM ext-manifest-unreadable" 1 "ext-manifest-unreadable" "Traceback" $S --home "$H"
+done
 
 echo "== 확장 파일 안의 문자열"
 mk; ext .cursor anthropic.claude-code-2.1.311 2.1.311
