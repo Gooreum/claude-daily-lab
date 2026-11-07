@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "defaultMode": "default",
+    "allow": ["Bash(npm test:*)", "Bash(git status)", "Bash(git diff *)", "Read(./src/**)", "Edit(./src/**)", "WebFetch(domain:docs.claude.com)", "mcp__github__*"],
+    "ask": ["Bash(git push *)"],
+    "deny": ["Bash(rm -rf *)", "Read(./.env)"]
+  }
+}

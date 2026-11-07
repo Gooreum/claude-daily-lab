@@ -1,0 +1,1 @@
+{"permissions": {"denyInsteadOfPrompting": true, "defaultMode": "acceptEdits", "allow": ["Bash(npm test:*)"], "deny": ["Bash(sudo *)"]}}
