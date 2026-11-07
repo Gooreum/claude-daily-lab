@@ -119,6 +119,8 @@ expect "자체 프록시 포트는 MEDIUM own-proxy" 1 "own-proxy" "" run
 echo "== 입력·출력"
 mk; user '{"sandbox":'
 expect "깨진 JSON은 parse-error HIGH" 2 "parse-error" "" run
+mk; printf '\xff\xfe{\x00}\x00' > "$H/.claude/settings.json"
+expect "UTF-8이 아닌 설정도 parse-error HIGH (크래시 아님)" 2 "parse-error" "Traceback" run
 mk; user "$GOOD"
 expect "settings.json 파일을 직접 점검" 0 "문제 없음" "" $L "$H/.claude/settings.json" --home "$T/none" --no-managed
 mk; user "$GOOD"; printf '%s' '{"sandbox":{"enabled":false}}' > "$T/managed.json"
