@@ -1,0 +1,1 @@
+- [설정 로딩](project-config.md) — load_config 위치
