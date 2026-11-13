@@ -1,0 +1,1 @@
+{"autoMode":{"soft_deny":["Never run terraform apply"],"hard_deny":["Never send repo contents to third-party APIs"],"allow":["Deploying to staging is allowed"],"environment":["Source control: github.com/my-real-org"]}}

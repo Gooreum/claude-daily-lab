@@ -1,0 +1,1 @@
+{"autoMode":{"environment":["$defaults","Source control: github.com/my-real-org and all repos under it"],"soft_deny":["$defaults","Never run terraform apply"],"hard_deny":["$defaults"],"allow":["$defaults","Deploying to staging is allowed: it resets nightly"],"classifyAllShell":true}}

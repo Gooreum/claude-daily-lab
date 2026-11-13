@@ -1,0 +1,1 @@
+{"autoMode":{"soft_deny":["$default","Never run terraform apply"],"hard_deny":["$defaults","$defaults"]}}

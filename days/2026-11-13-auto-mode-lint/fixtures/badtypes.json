@@ -1,0 +1,1 @@
+{"autoMode":{"soft_deny":"Never run terraform apply","allow":["$defaults",42],"classifyAllShell":"yes","deny":["$defaults"],"hard_deny":[]}}
