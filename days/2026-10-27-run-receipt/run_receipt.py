@@ -147,10 +147,12 @@ def run_check(spec_path, now):
 
     blocked = spec.get("blocked")
     blocked_path = os.path.join(root, fmt_path(blocked, now)) if blocked else None
-    if blocked_path and os.path.isfile(blocked_path) and os.path.getsize(blocked_path) > 0:
-        first = open(blocked_path, encoding="utf-8", errors="replace").read().strip().splitlines()[0][:120]
-        add("blocked", "BLOCKED", ["사람이 볼 차례: %s" % first], blocked_path)
-        return results, "BLOCKED"          # 막힌 밤은 결과 파일이 없는 게 정상이라 더 보지 않는다
+    if blocked_path and os.path.isfile(blocked_path):
+        with open(blocked_path, encoding="utf-8", errors="replace") as f:
+            lines = f.read().strip().splitlines()
+        if lines:                          # 공백/개행뿐인 파일은 빈 파일처럼 무시
+            add("blocked", "BLOCKED", ["사람이 볼 차례: %s" % lines[0][:120]], blocked_path)
+            return results, "BLOCKED"      # 막힌 밤은 결과 파일이 없는 게 정상이라 더 보지 않는다
 
     for o in spec.get("outputs", []):
         add("output", *check_output(o, root, now))
