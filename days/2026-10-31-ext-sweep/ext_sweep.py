@@ -149,6 +149,8 @@ def check_extensions(home, ext_id, bad_versions, port, findings):
                 try:
                     with open(pj, "r", encoding="utf-8") as fh:
                         meta = json.load(fh)
+                    if not isinstance(meta, dict):
+                        raise ValueError("manifest is not an object")
                     pv = str(meta.get("version", ""))
                     if pv and pv.lower() != version:
                         findings.append(Finding("MEDIUM", "ext-version-mismatch", rel(pj, home),
