@@ -153,8 +153,11 @@ def scan_settings(sc, path, text):
     if isinstance(hooks, dict):
         for event, groups in hooks.items():
             for g in groups if isinstance(groups, list) else []:
-                for h in (g.get("hooks", []) if isinstance(g, dict) else []):
-                    cmd = h.get("command") or h.get("prompt") or ""
+                inner = g.get("hooks", []) if isinstance(g, dict) else []
+                for h in inner if isinstance(inner, list) else []:
+                    if not isinstance(h, dict):
+                        continue
+                    cmd = str(h.get("command") or h.get("prompt") or "")
                     sc.add("MEDIUM", "project-hook", path, line_of(cmd[:30] or event),
                            f"프로젝트 훅({event})이 켜지는 즉시 실행된다", cmd)
     perms = data.get("permissions")
