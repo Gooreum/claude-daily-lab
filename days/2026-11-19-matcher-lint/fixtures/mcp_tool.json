@@ -1,0 +1,4 @@
+{"hooks": {"PreToolUse": [
+  {"matcher": "mcp__plugin_my-plugin_db__.*", "hooks": [{"type": "mcp_tool", "server": "x", "tool": "y", "onFailure": "block"}]},
+  {"matcher": "mcp__.*__write.*", "hooks": [{"type": "command", "command": "true"}]},
+  {"matcher": "mcp__brave-search", "hooks": [{"type": "command", "command": "true"}]}]}}

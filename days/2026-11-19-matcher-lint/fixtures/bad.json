@@ -1,0 +1,149 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "true"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "true"
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__memory",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "true"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash(git commit*)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "true"
+          }
+        ]
+      },
+      {
+        "matcher": "*.ts",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "true"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "true"
+          }
+        ]
+      },
+      {
+        "matcher": "^Foo(Bar)?$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "true"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "true",
+            "if": "Bash(git *)"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "true",
+            "if": "bash(git *)"
+          }
+        ]
+      },
+      {
+        "matcher": "Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "true"
+          }
+        ]
+      },
+      {
+        "matcher": [
+          "Edit",
+          "Write"
+        ],
+        "hooks": []
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "deploy",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "true"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "Startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "true"
+          }
+        ]
+      }
+    ],
+    "StopFailure": [
+      {
+        "matcher": "rate-limit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "true"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "true"
+          }
+        ]
+      }
+    ]
+  }
+}

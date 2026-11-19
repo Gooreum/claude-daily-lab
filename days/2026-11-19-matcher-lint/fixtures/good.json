@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {"matcher": "Bash", "hooks": [{"type": "command", "command": "true", "if": "Bash(git commit*)"}]},
+      {"matcher": "Edit|Write", "hooks": [{"type": "command", "command": "true"}]},
+      {"matcher": "^Edit$", "hooks": [{"type": "command", "command": "true"}]},
+      {"matcher": "mcp__memory__.*", "hooks": [{"type": "command", "command": "true"}]},
+      {"matcher": "mcp__github__search_repositories", "hooks": [{"type": "command", "command": "true"}]},
+      {"matcher": "", "hooks": [{"type": "command", "command": "true"}]},
+      {"matcher": "Bash|PowerShell", "hooks": [{"type": "command", "command": "true", "if": "PowerShell(Remove-Item *)"}]}
+    ],
+    "SessionStart": [{"matcher": "startup|resume", "hooks": [{"type": "command", "command": "true"}]}],
+    "Stop": [{"hooks": [{"type": "command", "command": "true"}]}],
+    "Notification": [{"matcher": "permission_prompt", "hooks": [{"type": "command", "command": "true"}]}],
+    "FileChanged": [{"matcher": ".envrc|.env", "hooks": [{"type": "command", "command": "true"}]}]
+  }
+}

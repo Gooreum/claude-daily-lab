@@ -1,0 +1,2 @@
+{"hooks": {"PreToolUse": [{"matcher": "Edit.*", "hooks": [{"type": "command", "command": "true"}]}],
+           "PostToolUse": [{"matcher": "Write|Edit|MultiEdit", "hooks": [{"type": "command", "command": "true"}]}]}}
