@@ -1,0 +1,1 @@
+{"hooks":{"PreToolUse":[{"matcher":"Bash|Write","hooks":[{"type":"command","command":"bash \"$CLAUDE_PROJECT_DIR/fixtures/hooks/allow_fast.sh\""},{"type":"command","command":"bash \"$CLAUDE_PROJECT_DIR/fixtures/hooks/ask_fast.sh\""}]},{"matcher":".*","hooks":[{"type":"command","command":"bash \"$CLAUDE_PROJECT_DIR/fixtures/hooks/deny_exit2.sh\""}]}]}}

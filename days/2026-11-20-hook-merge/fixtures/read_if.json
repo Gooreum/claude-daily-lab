@@ -1,0 +1,1 @@
+{"hooks":{"PreToolUse":[{"matcher":"Read","hooks":[{"type":"command","command":"bash \"$CLAUDE_PROJECT_DIR/fixtures/hooks/ask_fast.sh\"","if":"Read(./.env)"}]}]}}

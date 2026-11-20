@@ -1,0 +1,1 @@
+{"hooks":{"PreToolUse":[{"matcher":"Bash","hooks":[{"type":"command","command":"bash \"$CLAUDE_PROJECT_DIR/fixtures/hooks/ask_fast.sh\""},{"type":"command","command":"bash \"$CLAUDE_PROJECT_DIR/fixtures/hooks/ask_slow2.sh\""},{"type":"command","command":"bash \"$CLAUDE_PROJECT_DIR/fixtures/hooks/allow_fast.sh\""}]}]}}
