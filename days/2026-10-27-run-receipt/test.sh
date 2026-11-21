@@ -93,6 +93,8 @@ mk; printf 'API 토큰 만료 — 로그인 필요\n시도한 것: 재시도 1�
 expect "BLOCKED면 exit 3, 결과 파일 없음은 실패로 세지 않음" 3 "API 토큰 만료" chk
 mk; : > "$T/w/BLOCKED.md"; good_csv; spec '{"blocked":"BLOCKED.md","outputs":[{"path":"out/r.csv"}]}'
 expect "빈 BLOCKED.md는 무시" 0 "" chk
+mk; printf '\n  \n' > "$T/w/BLOCKED.md"; good_csv; spec '{"blocked":"BLOCKED.md","outputs":[{"path":"out/r.csv"}]}'
+expect "공백뿐인 BLOCKED.md는 크래시 없이 무시" 0 "" chk
 mk; good_csv; spec '{"blocked":"BLOCKED.md","outputs":[{"path":"out/r.csv"}]}'
 expect "BLOCKED.md 없음" 0 "" chk
 
