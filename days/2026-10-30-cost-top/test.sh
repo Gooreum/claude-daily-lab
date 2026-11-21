@@ -137,6 +137,11 @@ check "--json이 파싱된다"                   'python3 -c "import json,sys; d
 echo '[{"data":[],"has_more":false,"data_refreshed_at":"2026-10-03T00:00:00Z"}]' > "$T/arr.json"
 expect "쪽 배열 입력, 빈 데이터"            0 "합계: \$0.00" "" $C cost --days 1 --now 2026-10-02 --input "$T/arr.json"
 expect "--top이 줄 수를 자르고 나머지 표시" 0 "나머지 1개" "" $C usage --days 1 --now 2026-10-02 --group-by actor --top 1 --input "$T/usage.json"
+echo '{broken' > "$T/bad.json"
+expect "--input 없는 파일은 종료 코드 2"     2 "--input을 읽을 수 없다" "" $C cost --days 1 --now 2026-10-02 --input "$T/nope.json"
+expect "--input 깨진 JSON은 종료 코드 2"     2 "--input을 읽을 수 없다" "" $C cost --days 1 --now 2026-10-02 --input "$T/bad.json"
+echo '[1,2]' > "$T/notobj.json"
+expect "--input 항목이 객체 아니면 코드 2"   2 "객체 하나 또는 객체 배열" "" $C cost --days 1 --now 2026-10-02 --input "$T/notobj.json"
 
 echo
 echo "통과 $pass · 실패 $fail"
