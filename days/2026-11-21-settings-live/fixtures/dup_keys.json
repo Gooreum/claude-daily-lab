@@ -1,0 +1,5 @@
+{
+  "permissions": {"deny": ["Read(./.env)", "Bash(rm -rf *)"]},
+  "model": "sonnet",
+  "permissions": {"allow": ["Bash(ls)"]}
+}

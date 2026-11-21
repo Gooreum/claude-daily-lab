@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "deny": "Bash(rm -rf *)",
+    "allow": ["Bash(git status", "", 7],
+    "defaultMode": "yolo"
+  },
+  "hooks": {
+    "PreToolUse": {"matcher": "Bash"},
+    "PostToolUse": [
+      {"matcher": "Edit"},
+      {"hooks": [{"type": "command"}, {"type": "cmd", "command": "x"}, {"type": "command", "command": "echo", "timeout": "5"}]}
+    ]
+  },
+  "env": {"RETRIES": 3},
+  "enabledPlugins": ["a@b"],
+  "model": 5
+}

@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": ["Bash(git status)", "Read(./src/**)"],
+    "deny": ["Bash(rm -rf *)", "Read(./.env)"],
+    "ask": ["Bash(git push *)"],
+    "defaultMode": "acceptEdits"
+  },
+  "env": {"FOO": "1"},
+  "hooks": {
+    "PreToolUse": [
+      {"matcher": "Bash", "hooks": [
+        {"type": "command", "command": "bash ./hooks/guard.sh", "timeout": 5},
+        {"type": "prompt", "prompt": "Is this safe? $ARGUMENTS", "model": "haiku"}
+      ]}
+    ],
+    "SessionStart": [{"hooks": [{"type": "command", "command": "echo hi"}]}]
+  },
+  "enabledPlugins": {"x@y": true},
+  "model": "sonnet"
+}

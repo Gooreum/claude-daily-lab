@@ -1,0 +1,4 @@
+{
+  // 위험한 명령 막기
+  "permissions": {"deny": ["Bash(sudo *)"]}
+}

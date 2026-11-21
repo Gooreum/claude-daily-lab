@@ -1,0 +1,7 @@
+{
+  "permisions": {"deny": ["Read(./.env)"]},
+  "enviroment": {},
+  "futureKeyNobodyKnows": 1,
+  "permissions": {"denny": ["Bash(sudo *)"]},
+  "hooks": {"pretooluse": [{"hooks": [{"type": "command", "command": "echo x"}]}], "MyEvent": []}
+}
