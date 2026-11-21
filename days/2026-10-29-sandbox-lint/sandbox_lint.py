@@ -106,6 +106,8 @@ def read_json(path):
         text = path.read_text(encoding="utf-8")
     except OSError as e:
         return None, f"읽을 수 없음: {e.strerror or e}"
+    except UnicodeDecodeError as e:
+        return None, f"UTF-8로 읽을 수 없음: {e}"
     try:
         data = json.loads(text)
     except ValueError as e:
