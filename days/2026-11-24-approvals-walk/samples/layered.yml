@@ -1,0 +1,25 @@
+version: 1
+rules:
+  - purpose: "Everything else takes two people; docs, services and src have rules of their own."
+    paths: ["**", "!docs/**", "!services/**", "!src/**"]
+    verdict: { claude: comments, seats: 2 }
+  - purpose: "Docs merge on Claude's review alone. Otherwise two people."
+    paths: ["docs/**"]
+    verdict: { claude: comments, seats: 2 }
+    override:
+      - { if: "claude/code_review = pass", verdict: { claude: approves, seats: 0 } }
+  - purpose: "Blocked until Claude's review passes. Then one person is enough, and Claude approves."
+    paths: ["services/**"]
+    verdict: { claude: blocks }
+    override:
+      - { if: "claude/code_review = pass", verdict: { claude: approves, seats: 1 } }
+  - purpose: "A failed review or a high finding blocks. A pass takes one person. Otherwise two."
+    paths: ["src/**"]
+    verdict: { claude: comments, seats: 2 }
+    override:
+      - { if: "claude/code_review = fail OR claude/code_review.severity >= high", verdict: { claude: blocks } }
+      - { if: "claude/code_review = pass", verdict: { claude: approves, seats: [{ count: 1, from: [humans, "!pr/authors"] }] } }
+  - purpose: "A pull request of more than 50 files takes three people."
+    paths: ["**"]
+    if: "pr/files_changed > 50"
+    verdict: { claude: comments, seats: 3 }

@@ -1,0 +1,11 @@
+# 흔한 실수: 넓은 규칙이 docs/를 빼지 않아서 docs 전용 규칙이 "덜 요구해도" 소용없다
+version: 1
+rules:
+  - purpose: "Everything takes two people."
+    paths: ["**"]
+    verdict: { claude: comments, seats: 2 }
+  - purpose: "Docs merge on Claude's review alone."
+    paths: ["docs/**"]
+    verdict: { claude: comments, seats: 2 }
+    override:
+      - { if: "claude/code_review = pass", verdict: { claude: approves, seats: 0 } }

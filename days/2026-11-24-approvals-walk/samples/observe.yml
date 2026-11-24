@@ -1,0 +1,6 @@
+version: 1
+mode: observe
+rules:
+  - purpose: "Everything takes two people."
+    paths: ["**"]
+    verdict: { claude: comments, seats: 2 }

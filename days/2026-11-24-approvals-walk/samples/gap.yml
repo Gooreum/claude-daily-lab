@@ -1,0 +1,7 @@
+# src/ 만 규칙이 있는 파일 — 그 밖의 파일은 아무도 심사하지 않는다
+version: 1
+rules:
+  - purpose: "Source changes take two people."
+    paths:
+      - "src/**"
+    verdict: { claude: comments, seats: 2 }

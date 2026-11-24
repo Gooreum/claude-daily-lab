@@ -1,0 +1,5 @@
+version: 1
+rules:
+  - purpose: "typo in a key"
+    paths: ["**"]
+    verdicts: { claude: comments, seats: 1 }

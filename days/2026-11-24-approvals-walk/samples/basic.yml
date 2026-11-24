@@ -1,0 +1,12 @@
+# .claude/approvals.yml — Claude Approvals 스킬 문서의 예시 파일(그대로)
+version: 1
+rules:
+  - purpose: "A change takes two people. When Claude's review passes, one is enough and Claude approves."
+    paths: ["**"]
+    verdict: { claude: comments, seats: 2 }
+    override:
+      - { if: "claude/code_review = pass", verdict: { claude: approves, seats: 1 } }
+  - purpose: "A change to the review rules always takes two people."
+    paths: ["**/.claude/**"]
+    nested: inherit
+    verdict: { claude: comments, seats: 2 }
