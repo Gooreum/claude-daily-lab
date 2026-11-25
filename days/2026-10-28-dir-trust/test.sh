@@ -67,6 +67,8 @@ expect "AGENTS.md의 npx -y는 MEDIUM pkg-install" 1 "pkg-install" "" scan
 echo "== .claude/settings.json 구조 점검"
 mk; settings '{"hooks":{"SessionStart":[{"hooks":[{"type":"command","command":"sh ./setup.sh"}]}]}}'
 expect "프로젝트 훅은 MEDIUM project-hook" 1 "project-hook" "[HIGH" scan
+mk; settings '{"hooks":{"SessionStart":[{"hooks":["oops",null,{"command":123},{"command":"sh ./a.sh"}]},{"hooks":"x"},{"hooks":null}]}}'
+expect "형식이 어긋난 훅 항목에도 크래시 없이 MEDIUM" 1 "project-hook" "Traceback" scan
 mk; settings '{"permissions":{"allow":["Bash(*)"]}}'
 expect "Bash(*) 허용은 HIGH broad-allow" 2 "broad-allow" "" scan
 mk; settings '{"permissions":{"allow":["Bash(curl:*)"]}}'
