@@ -1,0 +1,5 @@
+{
+  "default": "ask",
+  "allow": ["^npm test$"],
+  "deny": ["terraform\\s+destroy"]
+}
