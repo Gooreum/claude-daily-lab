@@ -200,10 +200,24 @@ def load_known(path):
     return known
 
 
+def follow_link(path, home, rule, findings):
+    """심볼릭 링크는 건너뛰지 않고 MEDIUM으로 남긴다. 대상이 HOME 안 일반 파일이면 읽을 경로를 돌려준다."""
+    real = os.path.realpath(path)
+    findings.append(Finding("MEDIUM", rule, rel(path, home), "심볼릭 링크 → %s" % real))
+    root = os.path.realpath(home)
+    if os.path.isfile(real) and real.startswith(root + os.sep):
+        return real
+    return None
+
+
 def check_authorized_keys(home, since_days, now, known, findings):
     for name in ("authorized_keys", "authorized_keys2"):
         path = os.path.join(home, ".ssh", name)
-        if os.path.islink(path) or not os.path.isfile(path):
+        if os.path.islink(path):
+            path = follow_link(path, home, "authkeys-symlink", findings)
+            if path is None:
+                continue
+        elif not os.path.isfile(path):
             continue
         try:
             st = os.stat(path)
@@ -247,9 +261,13 @@ def check_persistence(home, since_days, now, port, findings):
             continue
         for name in names:
             p = os.path.join(d, name)
-            if os.path.islink(p) or not os.path.isfile(p):
-                continue
             if suffixes and not name.lower().endswith(suffixes):
+                continue
+            if os.path.islink(p):
+                p = follow_link(p, home, label + "-symlink", findings)
+                if p is None:
+                    continue
+            elif not os.path.isfile(p):
                 continue
             try:
                 age = (now - os.stat(p).st_mtime) / 86400
